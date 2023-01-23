@@ -1,0 +1,19 @@
+{
+  "name": "redsocial",
+  "version": "1.0.0",
+  "description": "Red Social Curso Udemy VictorRobles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HercunBraian/red-social.git"
+  },
+  "author": "Braian Hercun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HercunBraian/red-social/issues"
+  },
+  "homepage": "https://github.com/HercunBraian/red-social#readme"
+}
