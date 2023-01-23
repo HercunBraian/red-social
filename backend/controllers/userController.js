@@ -1,12 +1,15 @@
 // Importar dependencias y modulos
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("../services/jwt");
+const mongoosePagination = require("mongoose-pagination");
 
 // Acciones de prueba
 
 const pruebaUser = (req, res) => {
     return res.status(200).send({
-        msg: "Mensaje enviado desde: controllers/userControllers.js"
+        msg: "Mensaje enviado desde: controllers/userControllers.js",
+        usuario: req.user
     });
 }
 
@@ -75,7 +78,7 @@ const login = (req, res) => {
 
     // Buscar en la BBDD si existe el usuario
     User.findOne({ email: params.email })
-       // .select({ "password": 0 })
+        // .select({ "password": 0 })
         .exec((error, user) => {
             if (error || !user) return res.status(404).send({
                 status: "Error",
@@ -85,14 +88,14 @@ const login = (req, res) => {
             // Comprobar contraseña 
             const pwd = bcrypt.compareSync(params.password, user.password);
 
-            if(!pwd){
+            if (!pwd) {
                 return res.status(400).send({
                     status: "Error",
                     message: "No te has indentificado correctamente"
                 })
             }
             // Devolver Token
-
+            const token = jwt.createToken(user);
             // Devolver datos del Usuario
 
             return res.status(200).json({
@@ -102,16 +105,81 @@ const login = (req, res) => {
                     id: user._id,
                     name: user.name,
                     nick: user.nick,
-                }
+                },
+                token
             })
         })
 
 
 
 }
+
+const profile = (req, res) => {
+
+    //Recibir parametro de ID por la URL
+    const id = req.params.id;
+
+    // Consulta para sacar los datos del usuario
+    User.findById(id)
+        .select({ password: 0, role: 0 })
+        .exec((error, userProfile) => {
+            if (error || !userProfile) {
+                return res.status(404).send({
+                    status: "Error",
+                    message: "El usuario no existe o hay un error"
+                })
+            }
+            // Devolver resultado
+            // Posteriormente devolver informacion de Follows
+            return res.status(200).send({
+                status: "success",
+                user: userProfile
+            })
+        })
+}
+
+const listUsers = (req, res) => {
+
+    // Controlar en que pagina estamos
+    let page = 1;
+    if (req.params.page) {
+        page = req.params.page;
+    }
+
+    page = parseInt(page);
+
+    // Consulta con mongoose pagination
+    let itemxPage = 1;
+
+    User.find().sort('_id').paginate(page, itemxPage, (error, users, total) => {
+
+        if (error || !users) {
+            return res.status(404).send({
+                status: "error",
+                message: "No hay usuarios disponibles",
+                error
+            })
+        }
+        return res.status(200).send({
+            status: "success",
+            message: "Ruta de listado de Usuarios",
+            users,
+            page,
+            itemxPage,
+            total,
+            pages: Math.ceil(total/itemxPage)
+
+        })
+    })
+
+    // Devolver Resultado posteriormente info de Follows
+}
+
 // Exportar Acciones
 module.exports = {
     pruebaUser,
     register,
-    login
+    login,
+    profile,
+    listUsers
 }
