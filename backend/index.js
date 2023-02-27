@@ -23,10 +23,23 @@ app.use(express.urlencoded({extended:true}));
 const UserRoutes = require ("./routes/userRouter");
 const PublicationRoutes = require("./routes/publicationRouter");
 const FollowRoutes = require("./routes/followRouter");
+const ClientRoutes = require("./routes/clientRouter");
+const TicketRouter = require("./routes/ticketRouter");
+const ComentRouter = require("./routes/comentRouter");
+const MachineRouter = require("./routes/machineRouter");
+const DepartmentRouter = require("./routes/deparmentRouter");
+const TecnicoRouter = require("./routes/tecnicoRouter");
 
 app.use("/api/user", UserRoutes);
 app.use("/api", PublicationRoutes);
-app.use("/api", FollowRoutes);
+app.use("/api/follow", FollowRoutes);
+app.use("/api/client", ClientRoutes);
+app.use("/api/publication", PublicationRoutes);
+app.use("/api/ticket", TicketRouter);
+app.use("/api/coment", ComentRouter);
+app.use("/api/machine", MachineRouter);
+app.use("/api/department", DepartmentRouter);
+app.use("/api/tecnico", TecnicoRouter);
 
 // Ruta de prueba
 app.get("/ruta-prueba", (req, res) => {
