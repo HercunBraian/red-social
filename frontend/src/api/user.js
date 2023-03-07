@@ -3,29 +3,29 @@ import { ENV } from "../config/config";
 export class User {
   baseApi = ENV.BASE_API;
 
-  async login(data) {
-    try {
-      const url = `${this.baseApi}/${ENV.API_ROUTES.UserLogin}`;
-      const params = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
-      };
+  async login(data){
+    try{
+        const url = `${this.baseApi}/${ENV.API_ROUTES.UserLogin}`
+        const params = {
+            method: "POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: data.email,
+                password: data.password,
+            }),
+        };
+        
+        const response = await fetch(url, params);
+        const result = await response.json();
 
-      const response = await fetch(url, params);
-      const result = await response.json();
-
-      if (response.status !== 200) throw result;
-      return result;
+        if(response.status !== 200) throw result;
+        return result;
     } catch (error) {
-      throw error;
+        throw error;
     }
-  }
+}
 
   async perfil(data) {
     const id = data.id;
@@ -94,6 +94,74 @@ export class User {
       throw error;
     }
   }
+
+  async userMe(token) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.UserMe}`
+      const params = {
+        headers: {
+          Authorization: token,
+        }
+      }
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async refreshAccessToken(refreshToken) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.UserRefreshAccesasToken}`;
+      const params = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: refreshToken,
+        }),
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  setAccessToken(token) {
+    localStorage.setItem(ENV.JWT.ACCESS, token)
+  }
+
+  getAccessToken() {
+    return localStorage.getItem(ENV.JWT.ACCESS);
+  }
+
+  setRefreshToken(token) {
+    localStorage.setItem(ENV.JWT.REFRESH, token);
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem(ENV.JWT.REFRESH);
+  }
+
+  removeTokens() {
+    localStorage.removeItem(ENV.JWT.ACCESS)
+    localStorage.removeItem(ENV.JWT.REFRESH)
+  }
+
+  // Seteamos la configuracion del Token
+
 
   /*  async perfilClient(params) {
     const idClient = params;

@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/HercunBraian/red-social/issues"
   },
-  "homepage": "https://github.com/HercunBraian/red-social#readme"
+  "homepage": "https://github.com/HercunBraian/red-social#readme",
+  "dependencies": {
+    "formik": "^2.2.9"
+  }
 }

@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 const uploads = multer({ storage: storage });
 
 // Definir Rutas
+router.post("/refresh-token", UserController.refreshAccessToken);
 router.get("/prueba-usuario", md_auth.auth, UserController.pruebaUser);
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);

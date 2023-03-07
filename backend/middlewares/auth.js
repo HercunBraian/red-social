@@ -1,6 +1,5 @@
 // Importar dependencias
-const jwt = require("jwt-simple");
-const moment = require("moment");
+const jwt = require("../services/jwt");
 
 // Import clave Secreta
 const libJwt = require("../services/jwt");
@@ -10,7 +9,7 @@ const secretJwt = libJwt.secretJwt;
 exports.auth = (req, res, next) => {
 
     // Comprobar si me llega la cabecera de autenticacion
-    if(!req.headers.authorization){
+    if (!req.headers.authorization) {
         return res.status(403).send({
             status: "Error",
             message: "La peticion no tiene la cabecera de Autenticacion"
@@ -21,11 +20,13 @@ exports.auth = (req, res, next) => {
 
     // Decodificar Token
     try {
-        const payload = jwt.decode(token, secretJwt);
+        const payload = jwt.decoded(token);
 
-        // Comprobar expiracion de Token
-        if(payload.exp <= moment().unix()){
-            return res.status(401).send({
+        const { exp } = payload;
+        const currenData = new Date().getTime();
+
+        if (exp <= currenData) {
+            return res.status(400).send({
                 status: "Error",
                 message: "El token ha expirado."
             })
@@ -33,7 +34,7 @@ exports.auth = (req, res, next) => {
 
         // Agregar datos del usuario a la Request
         req.user = payload;
-        
+
     } catch (error) {
         return res.status(404).send({
             status: "Error",

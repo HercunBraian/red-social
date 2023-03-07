@@ -7,9 +7,9 @@ const md_auth = require("../middlewares/auth");
 router.get("/prueba-cliente", ClientController.pruebaClient);
 router.post("/register", ClientController.register);
 router.patch("/update/:id", md_auth.auth, ClientController.update);
-router.get("/list", ClientController.list);
+router.get("/list", md_auth.auth, ClientController.list);
 router.delete("/delete/:id", md_auth.auth, ClientController.deleteClient);
-router.get("/profile/:id", ClientController.profile);
+router.get("/profile/:id", md_auth.auth, ClientController.profile);
 router.get(
   "/listMachine/:id/:page?",
   md_auth.auth,

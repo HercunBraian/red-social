@@ -108,7 +108,8 @@ const login = (req, res) => {
         });
       }
       // Devolver Token
-      const token = jwt.createToken(user);
+      const accessToken = jwt.createAccessToken(user);
+      const refreshToken = jwt.createRefreshToken(user);
       // Devolver datos del Usuario
 
       return res.status(200).json({
@@ -118,11 +119,36 @@ const login = (req, res) => {
           id: user._id,
           name: user.name,
           nick: user.nick,
+          email: user.email,
         },
-        token,
+        accessToken: accessToken,
+        refreshToken: refreshToken
       });
     });
 };
+
+function refreshAccessToken(req, res){
+  const {token} = req.body;
+
+  if(!token){
+    res.status(400).send({
+      msg: "Token requerido"
+    })
+  }
+  const {id} = jwt.decoded(token);
+
+  User.findOne({_id: id}, (error, userStorage) => {
+    if(error){
+      return res.status(500).send({
+        msg: "Error del servidor"
+      })
+    } else {
+      res.status(200).send({
+        accessToken: jwt.createAccessToken(userStorage)
+      })
+    }
+  })
+}
 
 // Perfil de usuario
 const profile = (req, res) => {
@@ -155,28 +181,18 @@ const profile = (req, res) => {
 };
 
 // Perfil de usuario Logueado
-const userMe = (req, res) => {
-  //Recibir parametro de ID de usuario Logueado
+async function userMe( req, res){
   const id = req.user.id;
 
-  // Consulta para sacar los datos del usuario
-  User.findById(id)
-    .select({ password: 0, role: 0 })
-    .exec(async (error, userProfile) => {
-      if (error || !userProfile) {
-        return res.status(404).send({
-          status: "Error",
-          message: "El usuario no existe o hay un error",
-        });
-      }
+  const response = await User.findById(id)
+  console.log(response)
 
-      // Devolver resultado
-      return res.status(200).send({
-        status: "success",
-        user: userProfile,
-      });
-    });
-};
+  if(!response){
+     res.status(400).send({msg:"No se ha encontrado usuario"})
+  } else {
+     res.status(200).send(response);
+  }
+}
 
 // Lista de usuarios
 const listUsers = (req, res) => {
@@ -478,4 +494,5 @@ module.exports = {
   deleteUser,
   avatar,
   counter,
+  refreshAccessToken
 };

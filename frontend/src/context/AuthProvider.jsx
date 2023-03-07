@@ -1,66 +1,88 @@
-import React, { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import { User } from "../api/user";
-import { ENV } from "../config/config";
+import {hasExpiredToken} from "../config/jwt";
 
 const userController = new User();
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({});
+export function AuthProvider(props) {
+    const { children } = props;
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
+    const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    authUser();
-  }, []);
+    useEffect(() => {
+        (async () => {
+            // Comprobar si el usuario esta logueado o no
+            const accessToken = userController.getAccessToken();
+            const refreshToken = userController.getRefreshToken();
+            
+            if (!accessToken || !refreshToken) {
+                logout();
+                setLoading(false)
+                return;
+            }
 
-  const authUser = async () => {
-    // Sacar datos del usuario Identificado del LocalStorage
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
+            if (hasExpiredToken(accessToken)) {
+                //ha caducado
+                if (hasExpiredToken(refreshToken)) {
+                    logout()
+                } else {
+                    await reLogin(refreshToken);
+                }
+            } else {
+                await login(accessToken);
+                
+            }
 
-    // Comprobar si tengo el token y el user
-    if (!token || !user) {
-      return false;
+            setLoading(false)
+        })()
+
+    }, []);
+
+    const reLogin = async (refreshToken) =>{
+        try {
+            const {accessToken} = await userController.refreshAccessToken(refreshToken)
+            userController.setAccessToken(accessToken);
+            
+            await login(accessToken);
+        } catch (error) {
+            
+        }
     }
 
-    // Transformar los datos a un objeto JS
-    const userObj = JSON.parse(user);
-    const userId = userObj.id;
+    const login = async (accessToken, refreshToken) => {
+        try {
+            const response = await userController.userMe(accessToken)
+            setUser(response)
+            setToken(accessToken)
+            
+            
+            
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
-    // Peticion Ajax al backend que compruebe el token
-    const baseApi = ENV.BASE_API;
-    const request = await fetch(
-      `${baseApi}/${ENV.API_ROUTES.UserPerfil}/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      }
-    );
+    const logout = () => {
+        setUser(null);
+        setToken(null)
+        userController.removeTokens();
+    }
 
-    const data = await request.json();
+    const data = {
+        token : token,
+        user, 
+        login,
+        logout,
+    };
 
-    setAuth(data.user);
-    /*  const response = await userController.perfil(userId);
-    setAuth(response.user);
-    console.log(auth); */
-    // Y que me devuelva todos los datos del usuario
+    if (loading) return null;
 
-    // Setear el estado de Auth
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        auth,
-        setAuth,
-      }}
-    >
-      {children}
+    return <AuthContext.Provider value={data} >
+        {children}
     </AuthContext.Provider>
-  );
-};
+}
 
 export default AuthContext;

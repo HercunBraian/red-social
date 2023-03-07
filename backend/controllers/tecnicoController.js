@@ -89,7 +89,9 @@ const login = (req, res) => {
                 })
             }
             // Devolver Token
-            const token = jwt.createToken(tecnico);
+            const accessToken = jwt.createAccessToken(tecnico);
+            const refreshToken = jwt.createRefreshToken(tecnico);
+
             // Devolver datos del Usuario
 
             return res.status(200).json({
@@ -100,7 +102,8 @@ const login = (req, res) => {
                     name: tecnico.name,
                     email: tecnico.email,
                 },
-                token
+                accessToken: accessToken,
+                refreshToken: refreshToken
             })
         })
 

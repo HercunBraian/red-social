@@ -61,7 +61,7 @@ const register = (req, res) => {
 // Funcion para obtener una lista de clientes.
 const list = (req, res) => {
   // Controlar en que pagina estamos
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 100 } = req.query;
 
   const options = {
     page: parseInt(page),

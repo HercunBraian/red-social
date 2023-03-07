@@ -12,7 +12,7 @@ const pruebaTicket = (req, res) => {
 }
 
 // Crear ticket
-const save = (req, res) => {
+const save2 = (req, res) => {
 
     // Conseguir datos del body
     const params = req.body;
@@ -49,6 +49,49 @@ const save = (req, res) => {
     })
 }
 
+// Crear ticket
+const save = (req, res) => {
+
+    // Conseguir datos del body
+    const params = req.body;
+
+    // Recoger el id del cliente asignar el ticket 
+    const clientName = params.client;
+
+    // Sacar id del usuario identificado
+    const userLogin = req.user;
+
+    // Comprobar que me llegan bien + validacion
+    if (!params.client || !params.title || !params.priority || !params.obs || !params.department) {
+        return res.status(400).json({
+            message: "Validacion Incorrecta"
+        });
+    }
+
+    Client.findOne({ name: clientName }, "_id", function async(err, client) {
+        if (err) throw err;
+        console.log(client._id)
+
+        // Crear objeto con modelo ticket
+        let newTicket = new Ticket({ ...req.body, client: client._id, user: userLogin.id, status: true });
+        
+        newTicket.save((error, ticketStored) => {
+            if (error || !ticketStored) {
+                return res.status(500).send({
+                    status: "Error",
+                    message: "No se ha podido crear el ticket usuario",
+                })
+            }
+
+            return res.status(200).send({
+                status: "Success",
+                ticketStored
+            })
+        })
+    })
+
+}
+
 // Listado de tickets que tiene el usuario logueado
 const listMyTickets = (req, res) => {
     // Sacar el id del usuario identificado
@@ -63,7 +106,7 @@ const listMyTickets = (req, res) => {
     if (req.params.page) page = req.params.page
 
     // Tickets por pagina quiero mostrar
-    const itemPerPage = 5;
+    const itemPerPage = 500;
 
     // Find a Ticket, popular datos de los usuarios y paginar con mongoose paginate
     Ticket.find({ user: userId })
@@ -99,12 +142,12 @@ const getTickets = (req, res) => {
     if (req.params.page) page = req.params.page
 
     // Tickets por pagina quiero mostrar
-    const itemPerPage = 7;
+    const itemPerPage = 100;
 
     if (status === undefined) {
         Ticket.find()
             .populate("user", "name -_id")
-            .populate("client","name -_id")
+            .populate("client", "name -_id")
             .populate("department", "name -_id")
             .paginate(page, itemPerPage, async (error, tickets, total) => {
                 if (error || !tickets) {

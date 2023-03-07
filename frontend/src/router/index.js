@@ -1,2 +1,2 @@
 export * from "./AdminRouter";
-export * from "./WebRouter";
+export * from "./PublicRouter";

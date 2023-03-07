@@ -3,12 +3,40 @@ import { ENV } from "../config/config";
 export class Client {
   baseApi = ENV.BASE_API;
 
-  async list(params) {
+  async createClient(accessToken, data){
+    try {
+        const url = `${this.baseApi}/${ENV.API_ROUTES.ClientCreate}`;
+        const params = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: accessToken
+            },
+            body: JSON.stringify(data),
+        }; 
+
+        const response = await fetch(url, params)
+        const result = await response.json()
+        if(response.status !== 200) return result;
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+  async list(token, params) {
     try {
       const pageFilter = `page=${params?.page || 1}`;
       const url = `${this.baseApi}/${ENV.API_ROUTES.ClientList}?${pageFilter}`;
+      const params2 = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
 
-      const response = await fetch(url);
+      const response = await fetch(url, params2);
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -18,6 +46,7 @@ export class Client {
       throw error;
     }
   }
+
 
   /*  async perfilClient(params) {
     const idClient = params;

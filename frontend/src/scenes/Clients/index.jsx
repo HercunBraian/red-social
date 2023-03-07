@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { Client } from "../../api/client";
+import useAuth from "../../hooks/useAuth";
 import moment from "moment";
+
+//Importar Componentes
 import Header from "../../components/Header";
+import ClientRegister from "../../components/admin/Client/ClientForm/registerClient";
 
 const clientController = new Client();
 
-const Team = () => {
+const Clients = () => {
+  const {token} = useAuth();
   const [clients, setClients] = useState(null);
   const [clientId, setClientId] = useState(null);
+  const [reload, setReload] = useState(false);
+
+  // Paginacion con DataGrid
+  const [pageSize, setPageSize] = useState(5)
+
+  const onReload = () => setReload((prevState) => !prevState);
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await clientController.list();
+        const response = await clientController.list(token);
         setClients(response.clients.docs);
         console.log(response.clients.docs);
       } catch (error) {
         console.error(error);
       }
     })();
-  }, []);
+  }, [reload]);
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -116,19 +127,31 @@ const Team = () => {
   return (
     <Box m="20px">
       <Header title="TEAM" subtitle="Managing the Team Members" />
-      <Box m="40px 0 0 0" height="75vh">
+      {/* <Button variant="contained" color="secondary" href="client/registrar">
+  Nuevo Cliente
+</Button> */}
+
+<Box>
+
+<ClientRegister onReload={onReload} />
+</Box>
+
+      <Box m="40px 0 0 0" height="69vh">
         <DataGrid
           checkboxSelection
           getRowId={(row) => row._id}
           rows={clients || []}
           onRowClick={(rows) => {
-            getIdClient(rows.id);
+            getIdClient(rows.id); 
           }}
           columns={columns}
+          rowsPerPageOptions={[5, 10, 20]}
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
         />
       </Box>
     </Box>
   );
 };
 
-export default Team;
+export default Clients;

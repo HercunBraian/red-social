@@ -55,7 +55,7 @@ const getMachines = (req, res) => {
     page = parseInt(page);
 
     // Consulta con mongoose pagination
-    const itemPerPage = 3;
+    const itemPerPage = 50;
 
     Machine.find().sort('_id')
         .populate("client", "name -_id")
@@ -70,7 +70,7 @@ const getMachines = (req, res) => {
             }
             // Listado de maquinas
             return res.status(200).send({
-                status: "Success",
+                status: "success",
                 message: "Listado de maquinas disponibles",
                 machines,
                 total,
@@ -100,7 +100,7 @@ const getMachine = (req, res) => {
             return res.status(200).send({
                 status: "Success",
                 message: "Perfil de maquina por ID",
-                Perfil: perfilMachine
+                perfil: perfilMachine
             });
         });
     })
@@ -123,10 +123,40 @@ const deleteMachine = (req, res) => {
 
     })
 }
+
+// Funcion para obtener una lista de clientes.
+const list = (req, res) => {
+    // Controlar en que pagina estamos
+    const { page = 1, limit = 10 } = req.query;
+  
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: "_id",
+    };
+  
+    Machine.paginate({}, options, (error, machines) => {
+      if (error || !machines) {
+        return res.status(404).send({
+          status: "error",
+          message: "No hay maquinas disponibles",
+          error,
+        });
+      }
+      return res.status(200).send({
+        status: "success",
+        message: "Ruta de listado de Clientes",
+        machines,
+      });
+    });
+  
+    // Devolver Resultado posteriormente info de Follows
+  };
 module.exports = {
     pruebaMachine,
     addMachine,
     getMachines,
     getMachine,
-    deleteMachine
+    deleteMachine,
+    list
 }

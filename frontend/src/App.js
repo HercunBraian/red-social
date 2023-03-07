@@ -1,12 +1,12 @@
 import React from "react";
-import { WebRouter, AdminRouter } from "./router";
+import { AdminRouter, PublicRouter } from "./router";
 
 function App() {
   return (
     <>
-      <WebRouter />
+      <PublicRouter />
       <AdminRouter />
-    </>
+  </>
   );
 }
 
