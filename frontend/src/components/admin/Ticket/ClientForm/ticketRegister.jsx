@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 
 // Importacion Hooks
 import useAuth from '../../../../hooks/useAuth';
@@ -19,7 +20,8 @@ import { useFormik } from "formik";
 const ticketController = new Ticket();
 const clientController = new Client();
 
-function TicketRegister() {
+function TicketRegister(props) {
+  const { onReload } = props;
   const { token } = useAuth();
   const [open, setOpen] = useState(false);
 
@@ -37,9 +39,8 @@ function TicketRegister() {
         console.log(error)
       }
     })()
-  }, []);
+  }, [token]);
 
-  console.log("clientes", clientes)
   const clientesFiltrados = clientes.filter(cliente =>
     cliente.name.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -59,6 +60,7 @@ function TicketRegister() {
     onSubmit: async (formValue) => {
       try {
         const response = await ticketController.createTicket(token, formValue);
+        onReload();
         handleClose();
       } catch (error) {
         console.log(error)
@@ -91,100 +93,97 @@ function TicketRegister() {
                 Login
               </Typography>
               <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="client"
-                  label="Nombre Cliente"
-                  name="client"
-                  autoComplete="client"
-                  onChange={formik.handleChange}
-                  value={formik.values.client}
-                  error={formik.touched.client && Boolean(formik.errors.client)}
-                  helperText={formik.touched.client && formik.errors.client}
-                  autoFocus
-                />
-                <TextField id="outlined-search" value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)} label="Buscar Cliente" type="search" />
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                  <Grid item xs={6}>
+                    <TextField id="outlined-search" value={busqueda}
+                      onChange={(e) => setBusqueda(e.target.value)} label="Filtrar Cliente" type="search" />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      id="client"
+                      name="client"
+                      select
+                      margin="normal"
+                      autoComplete="client"
+                      required
+                      fullWidth
+                      label="Seleccionar Cliente"
+                      onChange={formik.handleChange}
+                      value={formik.values.client}
+                      error={formik.touched.client && Boolean(formik.errors.client)}
+                      helperText={formik.touched.client && formik.errors.client}
+                      autoFocus
+                    >
+                      {clientesFiltrados.map(cliente => (
+                        <option key={cliente._id} value={cliente.name}>
+                          {cliente.name}
+                        </option>
+                      ))}
+                    </TextField>
+                    </Grid>
+                    </Grid>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="title"
+                    label="Asunto"
+                    name="title"
+                    autoComplete="title"
+                    onChange={formik.handleChange}
+                    value={formik.values.title}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
+                    autoFocus
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="obs"
+                    label="Observaciones"
+                    name="obs"
+                    autoComplete="obs"
+                    onChange={formik.handleChange}
+                    value={formik.values.obs}
+                    error={formik.touched.obs && Boolean(formik.errors.obs)}
+                    helperText={formik.touched.obs && formik.errors.obs}
+                    autoFocus
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="priority"
+                    label="Nivel Prioridad"
+                    name="priority"
+                    autoComplete="priority"
+                    onChange={formik.handleChange}
+                    value={formik.values.priority}
+                    error={formik.touched.priority && Boolean(formik.errors.priority)}
+                    helperText={formik.touched.priority && formik.errors.priority}
+                    autoFocus
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="department"
+                    label="Sector"
+                    name="department"
+                    autoComplete="department"
+                    onChange={formik.handleChange}
+                    value={formik.values.department}
+                    error={formik.touched.department && Boolean(formik.errors.department)}
+                    helperText={formik.touched.department && formik.errors.department}
+                    autoFocus
+                  />
 
-
-                <TextField
-                  id="outlined-select-currency"
-                  select
-                  margin="normal"
-                  required
-                  fullWidth
-                  label="Seleccionar Cliente"
-                >
-                  {clientesFiltrados.map(cliente => (
-                    <option key={cliente.name} value={cliente.name}>
-                      {cliente.name}
-                    </option>
-                  ))}
-                </TextField>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="title"
-                  label="Asunto"
-                  name="title"
-                  autoComplete="title"
-                  onChange={formik.handleChange}
-                  value={formik.values.title}
-                  error={formik.touched.title && Boolean(formik.errors.title)}
-                  helperText={formik.touched.title && formik.errors.title}
-                  autoFocus
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="obs"
-                  label="Observaciones"
-                  name="obs"
-                  autoComplete="obs"
-                  onChange={formik.handleChange}
-                  value={formik.values.obs}
-                  error={formik.touched.obs && Boolean(formik.errors.obs)}
-                  helperText={formik.touched.obs && formik.errors.obs}
-                  autoFocus
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="priority"
-                  label="Nivel Prioridad"
-                  name="priority"
-                  autoComplete="priority"
-                  onChange={formik.handleChange}
-                  value={formik.values.priority}
-                  error={formik.touched.priority && Boolean(formik.errors.priority)}
-                  helperText={formik.touched.priority && formik.errors.priority}
-                  autoFocus
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="department"
-                  label="Sector"
-                  name="department"
-                  autoComplete="department"
-                  onChange={formik.handleChange}
-                  value={formik.values.department}
-                  error={formik.touched.department && Boolean(formik.errors.department)}
-                  helperText={formik.touched.department && formik.errors.department}
-                  autoFocus
-                />
-
-                <Box textAlign='center' sx={{ mt: 3, mb: 2 }}>
-                  <Button type="submit" color="primary" variant='contained'>
-                    Crear Ticket
-                  </Button>
-                </Box>
+                  <Box textAlign='center' sx={{ mt: 3, mb: 2 }}>
+                    <Button type="submit" color="primary" variant='contained'>
+                      Crear Ticket
+                    </Button>
+                  </Box>
               </Box>
             </Box>
           </Container>
