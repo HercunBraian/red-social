@@ -28,7 +28,6 @@ const Tickets = () => {
             try {
                 const response = await ticketController.list(token);
                 setTickets(response.tickets);
-                console.log(response.tickets);
             } catch (error) {
                 console.error(error);
             }

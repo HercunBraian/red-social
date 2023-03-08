@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField } from '@material-ui/core';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,14 +12,37 @@ import useAuth from '../../../../hooks/useAuth';
 
 // Importaciones para peticion a Api y Validacion de Form
 import { Ticket } from "../../../../api/ticket";
+import { Client } from "../../../../api/client"
 import { initialValues, validationSchema } from "./registerForm";
 import { useFormik } from "formik";
 
 const ticketController = new Ticket();
+const clientController = new Client();
 
 function TicketRegister() {
-  const {token} = useAuth();
+  const { token } = useAuth();
   const [open, setOpen] = useState(false);
+
+  // Input de clientes
+  const [clientes, setClientes] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+
+  useEffect(() => {
+    // Creamos una funcion anonima auto ejecutable
+    (async () => {
+      try {
+        const response = await clientController.list(token);
+        setClientes(response.clients.docs)
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, []);
+
+  console.log("clientes", clientes)
+  const clientesFiltrados = clientes.filter(cliente =>
+    cliente.name.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   const handleOpen = () => {
     setOpen(true);
@@ -36,7 +59,6 @@ function TicketRegister() {
     onSubmit: async (formValue) => {
       try {
         const response = await ticketController.createTicket(token, formValue);
-        console.log(response)
         handleClose();
       } catch (error) {
         console.log(error)
@@ -83,6 +105,24 @@ function TicketRegister() {
                   helperText={formik.touched.client && formik.errors.client}
                   autoFocus
                 />
+                <TextField id="outlined-search" value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)} label="Buscar Cliente" type="search" />
+
+
+                <TextField
+                  id="outlined-select-currency"
+                  select
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Seleccionar Cliente"
+                >
+                  {clientesFiltrados.map(cliente => (
+                    <option key={cliente.name} value={cliente.name}>
+                      {cliente.name}
+                    </option>
+                  ))}
+                </TextField>
                 <TextField
                   margin="normal"
                   required
