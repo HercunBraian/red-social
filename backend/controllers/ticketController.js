@@ -2,6 +2,7 @@
 const Ticket = require("../models/ticket");
 const User = require("../models/user");
 const Client = require("../models/client")
+const Department = require("../models/department");
 const mongoosePaginate = require("mongoose-pagination");
 
 // Acciones de prueba
@@ -50,13 +51,14 @@ const save2 = (req, res) => {
 }
 
 // Crear ticket
-const save = (req, res) => {
+const save = async (req, res) => {
 
     // Conseguir datos del body
     const params = req.body;
-
-    // Recoger el id del cliente asignar el ticket 
+    console.log(params)
+    // Recoger el nombre del cliente asignar el ticket 
     const clientName = params.client;
+
 
     // Sacar id del usuario identificado
     const userLogin = req.user;
@@ -68,18 +70,19 @@ const save = (req, res) => {
         });
     }
 
-    Client.findOne({ name: clientName }, "_id", function async(err, client) {
+    // Luego buscamos el cliente
+    Client.findOne({ name: clientName }, "_id", function (err, client) {
         if (err) throw err;
         console.log(client._id)
 
         // Crear objeto con modelo ticket
-        let newTicket = new Ticket({ ...req.body, client: client._id, user: userLogin.id, status: true });
-        
+        let newTicket = new Ticket({ ...req.body, client: client._id, user: userLogin.id, status: "Pendiente" });
+
         newTicket.save((error, ticketStored) => {
             if (error || !ticketStored) {
                 return res.status(500).send({
                     status: "Error",
-                    message: "No se ha podido crear el ticket usuario",
+                    message: "No se ha podido crear el ticket",
                 })
             }
 
@@ -142,7 +145,7 @@ const getTickets = (req, res) => {
     if (req.params.page) page = req.params.page
 
     // Tickets por pagina quiero mostrar
-    const itemPerPage = 100;
+    const itemPerPage = 10000000;
 
     if (status === undefined) {
         Ticket.find()
@@ -191,27 +194,129 @@ const getTickets = (req, res) => {
 }
 
 // Modificar ticket por ID
-const updateTicket = (req, res) => {
-    // Recoger informacion del usuario a Actualizar
-    const { id } = req.params;
+/* const updateTicket = async (req, res) => {
     const ticket = req.body;
 
-    // Buscar y actualizar el ticket con la nueva info
-    Ticket.findByIdAndUpdate({ _id: id }, ticket, (error, ticketToUpdate) => {
+    // Obtener el nombre del cliente desde el objeto `ticket`
+    const clientName = ticket.client;    
 
-        if (error || !ticketToUpdate) {
-            return res.status(500).json({
-                status: "Error",
-                message: "Error al actualizar el ticket"
-            })
+    // Buscar el cliente por nombre
+    const clientResult = await new Promise((resolve, reject) => {
+        Client.findOne({ name: clientName }, "_id", function (error, client) {
+            if (error || !client) {
+                reject(new Error("No se ha podido encontrar el cliente"));
+            } else {
+                resolve(client);
+            }
+        });
+    });
+
+    // Incluir el `_id` del cliente y del departamento (si se especificó) en el objeto `ticket`
+    ticket.client = clientResult._id;
+
+    // Actualizar el ticket con el objeto `ticket` modificado
+    Ticket.findByIdAndUpdate(
+        req.params.id,
+        ticket,
+        { new: true },
+        (err, ticketUpdated) => {
+            if (err || !ticketUpdated) {
+                return res.status(500).json({
+                    status: "Error",
+                    message: "Error al actualizar el ticket",
+                    ticket: ticket,
+                });
+            }
+
+            return res.status(200).json({
+                status: "success",
+                message: "Ticket actualizado correctamente",
+                ticket: ticketUpdated,
+            });
         }
-        return res.status(200).send({
-            status: "success",
-            message: "Metodo de actualizar Ticket",
-            ticket: ticketToUpdate
-        })
-    })
+    );
+}; */
+
+const updateTicket = async (req, res) => {
+    const ticket = req.body;
+
+    let updateData = {};
+
+    if (ticket.client) {
+        const clientResult = await new Promise((resolve, reject) => {
+            Client.findOne({ name: ticket.client }, "_id", function (error, client) {
+                if (error || !client) {
+                    reject(new Error("No se ha podido encontrar el cliente"));
+                } else {
+                    resolve(client);
+                }
+            });
+        });
+
+        updateData.client = clientResult._id;
+    }
+
+    if (ticket.user) {
+        const userResult = await new Promise((resolve, reject) => {
+            User.findOne({ name: ticket.user }, "_id", function (error, user) {
+                if (error || !user) {
+                    reject(new Error("No se ha podido encontrar el usuario"));
+                } else {
+                    resolve(user);
+                }
+            });
+        });
+
+        updateData.user = userResult._id;
+    }
+
+    if (ticket.department) {
+        updateData.department = ticket.department;
+    }
+
+    if (ticket.title) {
+        updateData.title = ticket.title;
+    }
+
+    if (ticket.obs) {
+        updateData.obs = ticket.obs;
+    }
+
+    if (ticket.diagnostic) {
+        updateData.diagnostic = ticket.diagnostic;
+    }
+
+    if (ticket.status) {
+        updateData.status = ticket.status;
+    }
+
+    if (ticket.priority) {
+        updateData.priority = ticket.priority;
+    }
+
+    // Actualizar el ticket con los campos modificados
+    Ticket.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true },
+        (err, ticketUpdated) => {
+            if (err || !ticketUpdated) {
+                return res.status(500).json({
+                    status: "Error",
+                    message: "Error al actualizar el ticket",
+                    ticket: ticket,
+                });
+            }
+
+            return res.status(200).json({
+                status: "success",
+                message: "Ticket actualizado correctamente",
+                ticket: ticketUpdated,
+            });
+        }
+    );
 };
+
 
 // Perfil de ticket
 const profile = (req, res) => {
@@ -253,6 +358,43 @@ const ticketDelete = (req, res) => {
     })
 }
 
+// Contador de tickets Abiertos
+
+const ticketCount = (req, res) => {
+    Ticket.count((error, tickets) => {
+        if(error){
+            return res.status(400).send({
+                status: "error",
+                msg: error
+            })
+        } 
+
+        return res.status(200).send({
+            status: "success",
+            message: "Contador de Tickets",
+            tickets: tickets,
+        });
+    })
+}
+
+// Contador de tickets Cerrados
+
+const ticketCountClose = (req, res) => {
+    Ticket.count({ status: "Cerrado" }, (error, tickets) => {
+        if(error){
+            return res.status(400).send({
+                status: "error",
+                msg: error
+            })
+        } 
+
+        return res.status(200).send({
+            status: "success",
+            message: "Contador de Tickets",
+            tickets: tickets,
+        });
+    })
+}
 
 // Exportar Acciones
 module.exports = {
@@ -262,5 +404,8 @@ module.exports = {
     getTickets,
     updateTicket,
     ticketDelete,
-    profile
+    profile,
+    ticketCount,
+    ticketCountClose
+
 }

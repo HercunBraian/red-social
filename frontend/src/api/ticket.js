@@ -46,6 +46,112 @@ export class Ticket {
     }
   }
 
+  async updateTicket(token, idTicket, data){
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.TicketUpdate}/${idTicket}`;
+      const params = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token
+        },
+        body: JSON.stringify(data)
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if(response.status !== 200) throw result;
+      return result;
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async deleteTicket(token, idTicket) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.TicketDelete}/${idTicket}`;
+      const params = {
+        method: "DELETE",
+        headers: {
+          Authorization: token,
+        },
+      };
+  
+      const response = await fetch(url, params);
+      const result = await response.json();
+  
+      if (response.status !== 200) {
+        throw new Error(`Error deleting ticket: ${result.message}`);
+      }
+  
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTicket (token, ticketId) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.TicketPerfil}/${ticketId}`;
+      const params = {
+        headers: {
+          Authorization: token
+        }
+      }
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if(response.status !== 200) throw result;
+      return result;
+      
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTicketCount (token) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.TicketCount}`;
+      const params = {
+        headers: {
+          Authorization: token
+        }
+      }
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if(response.status !== 200) throw result;
+      return result;
+      
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTicketCountClose (token) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.TicketCountClose}`;
+      const params = {
+        headers: {
+          Authorization: token
+        }
+      }
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if(response.status !== 200) throw result;
+      return result;
+      
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   /*  async perfilClient(params) {
     const idClient = params;

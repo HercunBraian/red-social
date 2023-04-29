@@ -4,7 +4,6 @@ import useAuth from "../../hooks/useAuth";
 import {
   Box,
   IconButton,
-  LinearProgress,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -34,7 +33,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
       onClick={() => setSelected(title)}
       icon={icon}
     >
-      <Typography>{title}</Typography>
+      <Typography variant="h5">{title}</Typography>
       <Link to={to} />
     </MenuItem>
   );
@@ -52,7 +51,7 @@ const Sidebar = () => {
     <Box
       sx={{
         "& .pro-sidebar-inner": {
-          background: `${colors.primary[400]} !important`,
+          background: ` #FFFFFF !important`,
         },
         "& .pro-icon-wrapper": {
           backgroundColor: "transparent !important",
@@ -136,7 +135,7 @@ const Sidebar = () => {
             />
 
             <Typography
-              variant="h6"
+              variant="h5"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >

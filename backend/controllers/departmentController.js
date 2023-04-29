@@ -43,16 +43,9 @@ const save = (req, res) => {
 
 // Accion listado de departametos
 const getDeparments = (req, res) => {
-    // Funcion para obtener una lista de tickets.
+    // Funcion para obtener una lista de departamentos de la empresa.
 
-    // Controlar en que pagina estamos
-    const {page=1, limit=2} = req.query;
-    const options = {
-        page:parseInt(page),
-        limit: parseInt(limit)
-    };
-
-    Department.paginate({}, options, (error, departments) => {
+    Department.find((error, departments) => {
 
             if (error || !departments) {
                 return res.status(404).send({

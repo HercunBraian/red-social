@@ -17,10 +17,17 @@ export const ENV = {
     UserPerfil: "user/profile",
     UserMe: "user/userMe",
     UserRefreshAccesasToken: "user/refresh-token",
+    MachineCreate: "machine/save",
     MachineList: "machine/list",
     MachinePerfil: "machine/perfil",
     TicketList: "ticket/getTickets",
-    TicketCreate: "ticket/save"
+    TicketCreate: "ticket/save",
+    TicketUpdate: "ticket/update",
+    TicketDelete: "ticket/delete",
+    TicketPerfil: "ticket/perfil",
+    TicketCount: "ticket/count",
+    TicketCountClose: "ticket/countClose",
+    DepartmentList: "department/list",
   },
   JWT: {
     ACCESS: "token",

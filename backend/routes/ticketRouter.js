@@ -24,6 +24,9 @@ router.get("/getTickets/:page?", md_auth.auth, TicketController.getTickets);
 router.patch("/update/:id", md_auth.auth, TicketController.updateTicket);
 router.delete("/delete/:id", md_auth.auth, TicketController.ticketDelete);
 router.get("/perfil/:id", md_auth.auth, TicketController.profile);
+router.get("/count", md_auth.auth, TicketController.ticketCount);
+router.get("/countClose", md_auth.auth, TicketController.ticketCountClose);
+
 //router.post("/uploadimg", [md_auth.auth, uploads.single('file0')], UserController.uploadImg);
 
 // Exportar Router

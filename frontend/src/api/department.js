@@ -1,9 +1,9 @@
 import { ENV } from "../config/config";
 
-export class Machine {
+export class Department {
   baseApi = ENV.BASE_API;
 
-  async createMachine(accessToken, data) {
+ /*  async createMachine(accessToken, data) {
     try {
       const url = `${this.baseApi}/${ENV.API_ROUTES.MachineCreate}`;
       const params = {
@@ -23,10 +23,10 @@ export class Machine {
       throw error;
     }
   }
-
+ */
   async list(token) {
     try {
-      const url = `${this.baseApi}/${ENV.API_ROUTES.MachineList}}`;
+      const url = `${this.baseApi}/${ENV.API_ROUTES.DepartmentList}`;
       const params = {
         method: "GET",
         headers: {

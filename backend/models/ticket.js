@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const {Schema} = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate");
+const shortid = require('shortid');
+
+
 
 const TicketSchema = mongoose.Schema (
     {
@@ -13,26 +16,29 @@ const TicketSchema = mongoose.Schema (
             ref: "User"
         },
         department:{
-            type: Schema.ObjectId,
-            ref: "Department"
+            type: String,
         },
         title:{
             type: String,
-            required: true,
         },
         obs:{
             type: String,
-            required: true
         },
-        status: Boolean,
+        diagnostic:{
+            type: String,
+        },
+        status:{
+            type: String,
+        },
         priority:{
-            type: Number,
-            required: true
+            type: String,
         },
+        trackingId: { type: String, unique: true, default: shortid.generate },
         created_at:{
             type: Date,
             default: Date.now
         }
+        
     }
 );
 TicketSchema.plugin(mongoosePaginate);

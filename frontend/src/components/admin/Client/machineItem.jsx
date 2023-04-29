@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import moment from "moment";
-import Header from "../../../components/Header";
+import Header from "../../../components/Global/Header";
 
 export function MachineItem(props) {
     const { clientMachine } = props;

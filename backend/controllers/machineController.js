@@ -1,7 +1,6 @@
 // Importar dependencias y Modelos
 const Machine = require("../models/machine");
 const Client = require("../models/client");
-const paginate = require("mongoose-pagination");
 
 // Acciones de prueba
 const pruebaMachine = (req, res) => {
@@ -11,7 +10,7 @@ const pruebaMachine = (req, res) => {
 }
 
 // Crear Maquina
-const addMachine = async (req, res) => {
+/* const addMachine = async (req, res) => {
 
     // Recoger informacion del body
     const params = req.body;
@@ -41,6 +40,46 @@ const addMachine = async (req, res) => {
             machineStored
         })
     })
+} */
+
+// Crear Maquina
+const addMachine = (req, res) => {
+
+    // Conseguir datos del body
+    const params = req.body;
+
+    // Recoger el id del cliente asignar el ticket 
+    const clientName = params.client;
+
+    // Comprobar que me llegan bien + validacion
+    if (!params.client || !params.name || !params.serial || !params.model || !params.version || !params.ubi) {
+        return res.status(400).json({
+            message: "Validacion Incorrecta"
+        });
+    }
+
+    Client.findOne({ name: clientName }, "_id", function async(err, client) {
+        if (err) throw err;
+        console.log(client._id)
+
+        // Crear objeto con modelo ticket
+        let newMachine = new Machine({ ...req.body, client: client._id });
+        
+        newMachine.save((error, machineStored) => {
+            if (error || !machineStored) {
+                return res.status(500).send({
+                    status: "Error",
+                    message: "No se ha podido crear la maquina",
+                })
+            }
+
+            return res.status(200).send({
+                status: "Success",
+                machineStored
+            })
+        })
+    })
+
 }
 
 // Obtener listado de maquinas con paginacion

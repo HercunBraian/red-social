@@ -5,19 +5,33 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { Machine } from "../../api/machine";
 import moment from "moment";
-import Header from "../../components/Header";
+import Header from "../../components/Global/Header";
+import { EquipoForm } from "../../components/admin/Equipo/EquipoForm/EquipoForm";
+import useAuth from "../../hooks/useAuth";
+
+// Importaciones de Semantic-UI
+import { Button } from "semantic-ui-react"
+import { BasicModal } from "../../components/admin/Shared/BasicModal/BasicModal"
 
 const machineController = new Machine();
 
 const Machines = () => {
+    const { token } = useAuth();
     const [machineList, setMachineList] = useState(null);
     const [machineId, setMachineId] = useState(null);
 
-    const token = localStorage.getItem("token");
+    // Show Modal
+    const [showModal, setShowModal] = useState(false)
+    const [reload, setReload] = useState(false);
+
+    //Funcion para abrir o cerrar el modal
+    const onOpenCloseModal = () => setShowModal ((prevState) => !prevState);
+
+    const onReload = () => setReload((prevState) => !prevState);
 
     useEffect(() => {
         getList();
-    }, []);
+    }, [reload]);
 
     const getList = async () => {
         const baseApi = ENV.BASE_API;
@@ -69,7 +83,7 @@ const Machines = () => {
             headerName: "Client",
             flex: 1,
             valueGetter: (params) => params.row.client.name
-          },
+        },
         {
             field: "created_at",
             headerName: "Fecha Creacion",
@@ -134,9 +148,53 @@ const Machines = () => {
     return (
         <Box m="20px">
             <Header title="TEAM" subtitle="Managing the Team Members" />
-            <Box m="40px 0 0 0" height="75vh">
+
+            <div className="menu-page">
+                <Button className="menu-page__add" primary onClick={onOpenCloseModal}>
+                    Nuevo Equipo
+                </Button>
+            </div>
+
+            <BasicModal show={showModal} close={onOpenCloseModal} title="Crear Nuevo Equipo">
+                <EquipoForm onReload={onReload} onClose={onOpenCloseModal} />
+            </BasicModal>
+
+            <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-row": {
+            borderBottom: colors.blueAccent[700],
+          },
+          "& .MuiDataGrid-cellContent": {
+            fontSize: "15px",
+          },
+          "& .name-column--cell": {
+            color: colors.greenAccent[300],
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+        }}
+      >
                 <DataGrid
-                    checkboxSelection
                     getRowId={(row) => row._id}
                     rows={machineList || []}
                     onRowClick={(rows) => {

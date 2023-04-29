@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import moment from "moment";
-import Header from "../../components/Header";
+import Header from "../../components/Global/Header";
 
 export function TicketItem(props) {
   const { clientTicket } = props;
@@ -99,6 +99,8 @@ export function TicketItem(props) {
 
   return (
     <>
+      
+
       <Box m="20px">
         <Header title="TICKETS" subtitle="Ultimos tickets agregados" />
         <Box m="40px 0 0 0" height="69vh">

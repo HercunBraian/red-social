@@ -7,19 +7,19 @@ import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 
 //Importar Componentes
-import Header from "../../components/Header";
+import Header from "../../components/Global/Header";
 import ClientRegister from "../../components/admin/Client/ClientForm/registerClient";
 
 const clientController = new Client();
 
 const Clients = () => {
-  const {token} = useAuth();
+  const { token } = useAuth();
   const [clients, setClients] = useState(null);
   const [clientId, setClientId] = useState(null);
   const [reload, setReload] = useState(false);
 
   // Paginacion con DataGrid
-  const [pageSize, setPageSize] = useState(5)
+  const [pageSize, setPageSize] = useState(5);
 
   const onReload = () => setReload((prevState) => !prevState);
 
@@ -131,18 +131,51 @@ const Clients = () => {
   Nuevo Cliente
 </Button> */}
 
-<Box>
+      <Box>
+        <ClientRegister onReload={onReload} />
+      </Box>
 
-<ClientRegister onReload={onReload} />
-</Box>
-
-      <Box m="40px 0 0 0" height="69vh">
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-row": {
+            borderBottom: colors.blueAccent[700],
+          },
+          "& .MuiDataGrid-cellContent": {
+            fontSize: "15px",
+          },
+          "& .name-column--cell": {
+            color: colors.greenAccent[300],
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+        }}
+      >
         <DataGrid
           checkboxSelection
           getRowId={(row) => row._id}
           rows={clients || []}
           onRowClick={(rows) => {
-            getIdClient(rows.id); 
+            getIdClient(rows.id);
           }}
           columns={columns}
           rowsPerPageOptions={[5, 10, 20]}
