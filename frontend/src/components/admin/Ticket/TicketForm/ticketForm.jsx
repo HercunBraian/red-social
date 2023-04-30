@@ -51,6 +51,7 @@ export function TicketForm(props) {
           priority: formValue.priority,
           department: formValue.department,
           status: formValue.status,
+          visit: formValue.visit
         };
         if (!ticketInfo) {
           await ticketController.createTicket(token, data);
@@ -94,10 +95,17 @@ export function TicketForm(props) {
   ];
 
   const optionsSector = [
-    { key: "1", text: "IT", value: "IT" },
-    { key: "2", text: "Hardware", value: "Hardware" },
-    { key: "3", text: "Reparacion", value: "Reparacion" },
-    { key: "4", text: "Proyectos", value: "Proyectos" },
+    { key: "1", text: "SOPORTE IT", value: "SOPORTE IT" },
+    { key: "2", text: "SERVICIO TECNICO", value: "SERVICIO TECNICO" },
+  ];
+
+  const optionsVisit = [
+    { key: "1", text: "MANTENIMIENTO PREVENTIVO", value: "MANTENIMIENTO PREVENTIVO" },
+    { key: "2", text: "REPARACION", value: "REPARACION" },
+    { key: "3", text: "INSPECCION MENSUAL", value: "INSPECCION MENSUAL" },
+    { key: "4", text: "CAPACITACION", value: "CAPACITACION" },
+    { key: "5", text: "INSTALACION", value: "INSTALACION" },
+    { key: "6", text: "OTROS", value: "OTROS" },
   ];
 
   return (
@@ -128,6 +136,15 @@ export function TicketForm(props) {
         value={formik.values.title}
         error={formik.errors.title}
       />
+      <Form.Field
+          control={Select}
+          label="Concento de Visita"
+          options={optionsVisit}
+          placeholder="Concento de Visita"
+          value={formik.values.visit}
+          onChange={(e, { value }) => formik.setFieldValue("visit", value)}
+          error={formik.errors.visit}
+        />
       <Form.Group widths="equal">
         <Form.Field
           control={Select}

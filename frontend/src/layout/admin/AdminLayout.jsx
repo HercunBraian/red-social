@@ -18,7 +18,7 @@ export function AdminLayout(props) {
                 <div className="app">
                     <Sidebar isSidebar={isSidebar} />
                     <main className="content">
-                        <Topbar setIsSidebar={setIsSidebar} />
+                        
                         {children}
                     </main>
                 </div>

@@ -7,6 +7,7 @@ export function initialValues (ticketId) {
     obs: ticketId?.obs || "",
     priority: ticketId?.priority || "",
     department: ticketId?.department || "",
+    visit: ticketId?.visit || "",
   };
 };
 
@@ -17,5 +18,6 @@ export function validationSchema(){
         obs: Yup.string().required("Campo obligatorio"),
         priority: Yup.string().required("Campo obligatorio"),
         department: Yup.string().required("Campo obligatorio"),
+        visit: Yup.string().required("Campo obligatorio"),
     })
 }

@@ -33,6 +33,9 @@ const TicketSchema = mongoose.Schema (
         priority:{
             type: String,
         },
+        visit:{
+            type: String,
+        },
         trackingId: { type: String, unique: true, default: shortid.generate },
         created_at:{
             type: Date,

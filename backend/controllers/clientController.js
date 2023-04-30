@@ -133,10 +133,13 @@ const listTicket = (req, res) => {
   if (req.params.page) page = req.params.page;
 
   // Usuarios por pagina quiero mostrar
-  const itemPerPage = 5;
+  const itemPerPage = 100;
 
   // Find a Follow, popular datos  de los usuarios y paginar con mongoose paginate
-  Ticket.find({ client: clientId }).paginate(
+  Ticket.find({ client: clientId })
+    .populate("user", "name -_id")
+    .populate("client", "name -_id")      
+    .paginate(
     page,
     itemPerPage,
     async (error, tickets, total) => {

@@ -21,7 +21,7 @@ const SidebarContainer = styled(Box)({
     width: "380px", 
     height: "100vh", 
     borderRight: "1px solid #e0e0e0",
-    borderRadius: "1px solid #e0e0e0",
+    borderLeft: "1px solid #e0e0e0",
     "box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)",
     "-webkit-box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)",
     "-moz-box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)", 
@@ -34,7 +34,7 @@ const SidebarContainer = styled(Box)({
   };
 
  
-const SidebarClient = ({ handleClientSelection }) => {
+  const SidebarInfo = ({ handleClientSelection, handleReturn }) => {
   // Token de Autenticacion
   const { token } = useAuth();
   // Estado para almacenar la lista de Clientes
@@ -63,10 +63,6 @@ const SidebarClient = ({ handleClientSelection }) => {
   client.name.toLowerCase().includes(searchValue.toLowerCase())
 ) || [];
 
-const handleReturn = () => {
-    handleClientSelection(null);
-  };
-
   return (
     <SidebarContainer>
       <TextField
@@ -78,18 +74,7 @@ const handleReturn = () => {
       />
       <div style={{ maxHeight: "calc(100vh - 200px)", overflowY: "auto" }}>
         <List>
-          {filteredClients
-            .slice((currentPage - 1) * 10, currentPage * 20)
-            .map((client) => (
-              <ListItem key={client.id} style={SidebarItem}>
-                <ListItemText
-                  primary={client.name}
-                  secondary={client.direccion}
-                  onClick={() => handleClientSelection(client._id)}
-                  
-                />
-              </ListItem>
-            ))}
+          <h1>Probando</h1>
         </List>
       </div>
       <Pagination
@@ -102,4 +87,4 @@ const handleReturn = () => {
   );
 };
 
-export default SidebarClient;
+export default SidebarInfo;

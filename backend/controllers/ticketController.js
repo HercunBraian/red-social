@@ -64,7 +64,7 @@ const save = async (req, res) => {
     const userLogin = req.user;
 
     // Comprobar que me llegan bien + validacion
-    if (!params.client || !params.title || !params.priority || !params.obs || !params.department) {
+    if (!params.client || !params.title || !params.priority || !params.obs || !params.department || !params.visit) {
         return res.status(400).json({
             message: "Validacion Incorrecta"
         });
@@ -359,7 +359,6 @@ const ticketDelete = (req, res) => {
 }
 
 // Contador de tickets Abiertos
-
 const ticketCount = (req, res) => {
     Ticket.count((error, tickets) => {
         if(error){
@@ -378,7 +377,6 @@ const ticketCount = (req, res) => {
 }
 
 // Contador de tickets Cerrados
-
 const ticketCountClose = (req, res) => {
     Ticket.count({ status: "Cerrado" }, (error, tickets) => {
         if(error){

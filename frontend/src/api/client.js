@@ -24,28 +24,49 @@ export class Client {
     }
 }
 
-  async list(token, params) {
-    try {
-      const pageFilter = `page=${params?.page || 1}`;
-      const url = `${this.baseApi}/${ENV.API_ROUTES.ClientList}?${pageFilter}`;
-      const params2 = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      };
+async list(token, params) {
+  try {
+    const pageFilter = `page=${params?.page || 1}`;
+    const url = `${this.baseApi}/${ENV.API_ROUTES.ClientList}?${pageFilter}`;
+    const params2 = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
 
-      const response = await fetch(url, params2);
-      const result = await response.json();
+    const response = await fetch(url, params2);
+    const result = await response.json();
 
-      if (response.status !== 200) throw result;
+    if (response.status !== 200) throw result;
 
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    return result;
+  } catch (error) {
+    throw error;
   }
+}
+
+async listTickets(token, idClient) {
+  try {
+    const url = `${this.baseApi}/${ENV.API_ROUTES.ClientListTicket}/${idClient}`;
+    const params = {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    };
+
+    const response = await fetch(url, params);
+    const result = await response.json();
+
+    if (response.status !== 200) throw result;
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 
 
   /*  async perfilClient(params) {

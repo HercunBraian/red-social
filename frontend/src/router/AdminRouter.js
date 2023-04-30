@@ -9,6 +9,7 @@ import { ProtectedRoutePrivate } from "../components/Global/ProtectedRouterPriva
 // Layouts
 import { AdminLayout } from "../layout/admin/AdminLayout"
 import { LoginLayout } from "../layout/login/LoginLayout";
+import { ClientLayout} from "../layout/admin/ClientLayout";
 
 // Pages
 import Clients from "../scenes/Clients";
@@ -40,12 +41,13 @@ export function AdminRouter() {
         <Route path="/admin/*" element={loadLayout(AdminLayout, Dashboard)} />
         <Route path="/admin/tickets" element={loadLayout(AdminLayout, Ticket)} />
         <Route path="/admin/ticket/:ticketId" element={loadLayout(AdminLayout, TicketItem)} />
-        <Route path="/admin/clients" element={loadLayout(AdminLayout, Clients)} />
+       {/*  <Route path="/admin/clients" element={loadLayout(AdminLayout, Clients)} /> */}
+       <Route path="/admin/clients" element={loadLayout(AdminLayout, Clients)} />
         <Route path="/admin/profile/:clientId" element={loadLayout(AdminLayout, Client)} />
         <Route path="/admin/users" element={loadLayout(AdminLayout, User)} />
         <Route path="/admin/machines" element={loadLayout(AdminLayout, Machines)} />
         <Route path="/machine-profile/:machineId" element={loadLayout(AdminLayout, idMachines)} />
       </Route>
     </Routes>
-  );
+  ); 
 }
