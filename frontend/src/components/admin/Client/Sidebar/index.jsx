@@ -21,17 +21,11 @@ const SidebarContainer = styled(Box)({
     width: "380px", 
     height: "100vh", 
     borderRight: "1px solid #e0e0e0",
-    borderRadius: "1px solid #e0e0e0",
-    "box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)",
-    "-webkit-box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)",
-    "-moz-box-shadow": "10px 1px 5px -6px rgba(0,0,0,0.1)", 
+    BoxShadow: "10px 1px 5px -6px rgba(0,0,0,0.1)",
+    WebkitBoxShadow: "10px 1px 5px -6px rgba(0,0,0,0.1)",
+    MozBoxShadow: "10px 1px 5px -6px rgba(0,0,0,0.1)", 
     "z-index": 1,
   });
-
-  const SidebarItem = {
-    borderBottom: "1px solid #e0e0e0",
-    paddingBottom: "5px"
-  };
 
  
 const SidebarClient = ({ handleClientSelection }) => {
@@ -39,6 +33,10 @@ const SidebarClient = ({ handleClientSelection }) => {
   const { token } = useAuth();
   // Estado para almacenar la lista de Clientes
   const [clients, setClients] = useState(null);
+
+  // Estados de paginacion
+  const [searchValue, setSearchValue] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   // UseEffect para realizar consulta a la Api
   useEffect(() => {
@@ -52,20 +50,16 @@ const SidebarClient = ({ handleClientSelection }) => {
     })();
   }, []);
 
-  const [searchValue, setSearchValue] = React.useState("");
-  const [currentPage, setCurrentPage] = React.useState(1);
-
+  // Manejador de pagina
   const handleChangePage = (event, value) => {
     setCurrentPage(value);
   };
 
+  // Filtro de clientes de Sidebar
   const filteredClients = clients?.filter((client) =>
   client.name.toLowerCase().includes(searchValue.toLowerCase())
 ) || [];
 
-const handleReturn = () => {
-    handleClientSelection(null);
-  };
 
   return (
     <SidebarContainer>
@@ -81,14 +75,16 @@ const handleReturn = () => {
           {filteredClients
             .slice((currentPage - 1) * 10, currentPage * 20)
             .map((client) => (
-              <ListItem key={client.id} style={SidebarItem}>
+              <ListItem key={client._id}>
                 <ListItemText
                   primary={client.name}
                   secondary={client.direccion}
                   onClick={() => handleClientSelection(client._id)}
                   
                 />
+                
               </ListItem>
+              
             ))}
         </List>
       </div>

@@ -11,51 +11,45 @@ import SidebarInfo from "../../components/admin/Client/SidebarInfo/SidebarInfo";
 
 const clientController = new Client();
 
-const tabStyle = {
-  "background-color": "#EEF2F6",
-  "box-shadow": "-2px 13px 5px -6px rgba(0,0,0,0.07)",
-  "-webkit-box-shadow": "-2px 13px 5px -6px rgba(0,0,0,0.07)",
-  "-moz-box-shadow": "-2px 13px 5px -6px rgba(0,0,0,0.07)",
-};
 
 const Clients = () => {
-  const [selectedClient, setSelectedClient] = useState(null);
   const { token } = useAuth();
+
+  const [selectedClient, setSelectedClient] = useState(null);
 
   const handleClientSelection = (clientId) => {
     setSelectedClient(clientId);
   };
+
+  // Funcion para desmontar componente y setear en null el estado de SelectedClient
+
+  const handleGoBack = () => {
+    setSelectedClient(null);
+  };
+
   const panes = [
     {
       menuItem: "Tickets",
       render: () => (
-        <Tab.Pane attached={false}  >
-          <ListTickets selectedClient={selectedClient}/>
-        </Tab.Pane>
-      ),
-    },
-    {
-      menuItem: "Seguimientos",
-      render: () => (
-        <Tab.Pane attached={false} >
-          <h2>Seguimientos Listado</h2>
-          <h2>{selectedClient}</h2>
+        <Tab.Pane attached={false}>
+          <ListTickets selectedClient={selectedClient} />
         </Tab.Pane>
       ),
     },
     {
       menuItem: "Inventario",
       render: () => (
-        <Tab.Pane attached={false}  >
-          <ListTickets selectedClient={selectedClient}/>
+        <Tab.Pane attached={false}>
+    
         </Tab.Pane>
       ),
     },
     {
-      menuItem: "Contacto",
+      menuItem: "Seguimientos",
       render: () => (
-        <Tab.Pane attached={false}  >
-          <ListTickets selectedClient={selectedClient}/>
+        <Tab.Pane attached={false}>
+          <h2>Seguimientos Listado</h2>
+          <h2>{selectedClient}</h2>
         </Tab.Pane>
       ),
     },
@@ -72,14 +66,13 @@ const Clients = () => {
   return (
     <>
       <div className="content-client">
-        
-      {selectedClient ? (
-<SidebarInfo client={selectedClient} />
-) : (
-<SidebarClient handleClientSelection={handleClientSelection} />
-)}
+        {selectedClient ? (
+          <SidebarInfo client={selectedClient} onGoBack={handleGoBack} />
+        ) : (
+          <SidebarClient handleClientSelection={handleClientSelection} />
+        )}
         <div className="content-panes">
-          <Tab menu={{ secondary: true }} panes={panes} style={tabStyle} />
+          <Tab menu={{ secondary: true }} panes={panes} />
         </div>
       </div>
     </>

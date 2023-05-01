@@ -75,7 +75,7 @@ export class User {
 
   async list(token) {
     try {
-      const url = `${this.baseApi}/${ENV.API_ROUTES.UserList}}`;
+      const url = `${this.baseApi}/${ENV.API_ROUTES.UserList}`;
       const params = {
         method: "GET",
         headers: {

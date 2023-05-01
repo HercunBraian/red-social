@@ -69,27 +69,28 @@ async listTickets(token, idClient) {
 }
 
 
-  /*  async perfilClient(params) {
-    const idClient = params;
+async perfilClient(idClient, token) {
     try {
       const url = `${this.baseApi}/${ENV.API_ROUTES.ClientPerfil}/${idClient}`;
       const params = {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
       };
 
       const response = await fetch(url, params);
       const result = await response.json();
 
-      if (response !== 200) throw result;
+      if (response.status !== 200) throw result;
+      
       return result;
     } catch (error) {
       throw error;
     }
   }
- */
+
   /* async updateCourse(accessToken, idCourse, data) {
     try {
       const formData = new FormData();

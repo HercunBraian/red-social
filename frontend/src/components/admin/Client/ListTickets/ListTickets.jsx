@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Loader } from "semantic-ui-react";
-import { Image, Button, Icon, Confirm } from "semantic-ui-react";
 import BuildIcon from "@mui/icons-material/Build";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { size, map } from "lodash";
 import "./ListTickets.css";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+
 
 // Importacion de Auth y de Api de Client
 import useAuth from "../../../../hooks/useAuth";
@@ -29,7 +26,6 @@ export function ListTickets(props) {
           selectedClient
         );
         setClients(response.tickets);
-        console.log(response);
       } catch (error) {
         console.log(error);
       }

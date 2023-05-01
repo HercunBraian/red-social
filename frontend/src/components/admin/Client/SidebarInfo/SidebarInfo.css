@@ -1,0 +1,42 @@
+.client-info{
+    margin-left: 15px;
+}
+
+.client-info hr{
+    opacity: 0.5;
+    margin-right: 15px;
+}
+
+.client-info__back:hover{
+    cursor: pointer;
+}
+
+.client-info__name{
+    margin-top: 15px;
+}
+
+.client-info__name h4{
+    font-size: 18px;
+    margin-bottom: 0px;
+}
+
+.client-info__name p{
+    font-size: 14px;
+}
+
+.client-info__client{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.client-info__client h4{
+    font-size: 14px;
+    color:rgb(105, 92, 92);
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.client-info__client p{
+    font-size: 12px;
+    margin-bottom: 0px;
+}

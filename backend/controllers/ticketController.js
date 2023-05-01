@@ -55,16 +55,16 @@ const save = async (req, res) => {
 
     // Conseguir datos del body
     const params = req.body;
-    console.log(params)
+    
     // Recoger el nombre del cliente asignar el ticket 
     const clientName = params.client;
+    const userName = params.user;
 
-
-    // Sacar id del usuario identificado
-    const userLogin = req.user;
+/*     // Sacar id del usuario identificado
+    const userLogin = req.user; */
 
     // Comprobar que me llegan bien + validacion
-    if (!params.client || !params.title || !params.priority || !params.obs || !params.department || !params.visit) {
+    if (!params.client || !params.title || !params.priority || !params.obs || !params.department || !params.user || !params.visit) {
         return res.status(400).json({
             message: "Validacion Incorrecta"
         });
@@ -75,8 +75,14 @@ const save = async (req, res) => {
         if (err) throw err;
         console.log(client._id)
 
+        // Buscar al usuario en la base de datos
+        User.findOne({ name: userName }, "_id", function (err, user) {
+            if (err) throw err;
+            console.log(user._id)
+
+
         // Crear objeto con modelo ticket
-        let newTicket = new Ticket({ ...req.body, client: client._id, user: userLogin.id, status: "Pendiente" });
+        let newTicket = new Ticket({ ...req.body, client: client._id, user: user._id, status: "Pendiente" });
 
         newTicket.save((error, ticketStored) => {
             if (error || !ticketStored) {
@@ -92,6 +98,7 @@ const save = async (req, res) => {
             })
         })
     })
+})
 
 }
 

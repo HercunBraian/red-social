@@ -5,11 +5,13 @@ import { useFormik } from "formik";
 import { initialValues, validationSchema } from "./ticketValidationForm";
 import { Ticket } from "../../../../api/ticket";
 import { Client } from "../../../../api/client";
+import { User } from "../../../../api/user";
 
 import useAuth from "../../../../hooks/useAuth";
 
 const ticketController = new Ticket();
 const clientController = new Client();
+const userController = new User();
 
 export function TicketForm(props) {
   const { token } = useAuth();
@@ -18,6 +20,10 @@ export function TicketForm(props) {
   // Input de clientes
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+
+  // Input de Tecnicos
+  const [tecnicos, setTecnicos] = useState([]);
+  const [busquedaTecnico, setBusquedaTecnico] = useState("");
   /* const [busqueda, setBusqueda] = useState(""); */
 
   useEffect(() => {
@@ -26,14 +32,25 @@ export function TicketForm(props) {
       try {
         const response = await clientController.list(token);
         setClientes(response.clients.docs);
+
+        // Consulta de Tecnicos
+        const responseTec = await userController.list(token);
+        setTecnicos(responseTec.users);
+        console.log(responseTec)
       } catch (error) {
         console.log(error);
       }
     })();
   }, []);
 
+  // Filtrado de Clientes
   const clientesFiltrados = clientes.filter((cliente) =>
     cliente.name.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  // Filtrado de Tecnicos
+  const tecnicosFiltrados = tecnicos.filter((tecnico) =>
+  tecnico.name.toLowerCase().includes(busquedaTecnico.toLowerCase())
   );
 
   const formik = useFormik({
@@ -51,7 +68,8 @@ export function TicketForm(props) {
           priority: formValue.priority,
           department: formValue.department,
           status: formValue.status,
-          visit: formValue.visit
+          visit: formValue.visit,
+          user: formValue.user,
         };
         if (!ticketInfo) {
           await ticketController.createTicket(token, data);
@@ -66,9 +84,27 @@ export function TicketForm(props) {
     },
   });
 
+  // Array de Clientes
   const clientArray = clientesFiltrados.map((client) => client);
 
   const optionClients = clientArray.map((nombre) => {
+    let value = nombre.name;
+    if (typeof value !== "boolean" && isNaN(Number(value))) {
+      value = value.toString();
+    } else {
+      value = Number(value);
+    }
+    return {
+      key: nombre._id,
+      text: nombre.name,
+      value,
+    };
+  });
+
+  // Array de Tecnicos
+  const tecnicosArray = tecnicosFiltrados.map((tecnico) => tecnico);
+  console.log(tecnicosArray)
+  const optionTecnicos = tecnicosArray.map((nombre) => {
     let value = nombre.name;
     if (typeof value !== "boolean" && isNaN(Number(value))) {
       value = value.toString();
@@ -100,7 +136,11 @@ export function TicketForm(props) {
   ];
 
   const optionsVisit = [
-    { key: "1", text: "MANTENIMIENTO PREVENTIVO", value: "MANTENIMIENTO PREVENTIVO" },
+    {
+      key: "1",
+      text: "MANTENIMIENTO PREVENTIVO",
+      value: "MANTENIMIENTO PREVENTIVO",
+    },
     { key: "2", text: "REPARACION", value: "REPARACION" },
     { key: "3", text: "INSPECCION MENSUAL", value: "INSPECCION MENSUAL" },
     { key: "4", text: "CAPACITACION", value: "CAPACITACION" },
@@ -127,6 +167,15 @@ export function TicketForm(props) {
           error={formik.errors.client}
         />
       </Form.Group>
+      <Form.Field
+        control={Select}
+        label="Tecnicos"
+        options={optionTecnicos}
+        placeholder="Seleccionar Tecnico"
+        value={formik.values.user}
+        onChange={(e, { value }) => formik.setFieldValue("user", value)}
+        error={formik.errors.user}
+      />
       <Form.Input
         fluid
         label="Titulo"
@@ -137,14 +186,14 @@ export function TicketForm(props) {
         error={formik.errors.title}
       />
       <Form.Field
-          control={Select}
-          label="Concento de Visita"
-          options={optionsVisit}
-          placeholder="Concento de Visita"
-          value={formik.values.visit}
-          onChange={(e, { value }) => formik.setFieldValue("visit", value)}
-          error={formik.errors.visit}
-        />
+        control={Select}
+        label="Concento de Visita"
+        options={optionsVisit}
+        placeholder="Concento de Visita"
+        value={formik.values.visit}
+        onChange={(e, { value }) => formik.setFieldValue("visit", value)}
+        error={formik.errors.visit}
+      />
       <Form.Group widths="equal">
         <Form.Field
           control={Select}

@@ -71,6 +71,10 @@ body,
   border-radius: 0.28571429rem  !important;
 }
 
+.css-8fl2i9-MuiListItem-root{
+  border-bottom: 1px solid rgba(128, 128, 128, 0.43);
+}
+
 .css-8fl2i9-MuiListItem-root:hover{
   background-color: #ccc;
 }

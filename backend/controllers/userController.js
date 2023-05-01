@@ -230,8 +230,6 @@ const listUsers = (req, res) => {
         itemxPage,
         total,
         pages: Math.ceil(total / itemxPage),
-        userFollowings: followUserIds.following,
-        userFollowMe: followUserIds.followers,
       });
     });
 };

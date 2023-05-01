@@ -25,12 +25,12 @@ exports.auth = (req, res, next) => {
         const { exp } = payload;
         const currenData = new Date().getTime();
 
-        if (exp <= currenData) {
+        /* if (exp <= currenData) {
             return res.status(400).send({
                 status: "Error",
                 message: "El token ha expirado."
             })
-        }
+        } */
 
         // Agregar datos del usuario a la Request
         req.user = payload;
