@@ -27,6 +27,7 @@ const TicketSchema = mongoose.Schema (
         diagnostic:{
             type: String,
         },
+        inventario: [String],
         status:{
             type: String,
         },

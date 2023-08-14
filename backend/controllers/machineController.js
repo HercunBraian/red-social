@@ -1,6 +1,7 @@
 // Importar dependencias y Modelos
 const Machine = require("../models/machine");
 const Client = require("../models/client");
+const Ticket = require("../models/ticket");
 
 // Acciones de prueba
 const pruebaMachine = (req, res) => {
@@ -44,12 +45,8 @@ const pruebaMachine = (req, res) => {
 
 // Crear Maquina
 const addMachine = (req, res) => {
-
     // Conseguir datos del body
     const params = req.body;
-
-    // Recoger el id del cliente asignar el ticket 
-    const clientName = params.client;
 
     // Comprobar que me llegan bien + validacion
     if (!params.client || !params.name || !params.serial || !params.model || !params.version || !params.ubi) {
@@ -58,29 +55,134 @@ const addMachine = (req, res) => {
         });
     }
 
-    Client.findOne({ name: clientName }, "_id", function async(err, client) {
-        if (err) throw err;
-        console.log(client._id)
+    // Buscar el cliente por su id
+    Client.findById(params.client, "_id", (err, client) => {
+        if (err) {
+            return res.status(500).json({
+                status: "Error",
+                message: "Error en la búsqueda del cliente en la base de datos",
+            });
+        }
 
-        // Crear objeto con modelo ticket
-        let newMachine = new Machine({ ...req.body, client: client._id });
+        if (!client) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Cliente no encontrado en la base de datos",
+            });
+        }
+
+        // Crear objeto con modelo Machine y asignar el id del cliente
+        const newMachine = new Machine({ ...req.body, client: client._id });
         
         newMachine.save((error, machineStored) => {
             if (error || !machineStored) {
-                return res.status(500).send({
+                return res.status(500).json({
                     status: "Error",
-                    message: "No se ha podido crear la maquina",
-                })
+                    message: "No se ha podido crear la máquina",
+                });
             }
 
-            return res.status(200).send({
+            return res.status(200).json({
                 status: "Success",
                 machineStored
-            })
-        })
-    })
-
+            });
+        });
+    });
 }
+
+// Contador de Repacaciones de Equipos
+const getRepairCount = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const machine = await Machine.findById(id).populate("tickets");
+        console.log(machine)
+        if (!machine) {
+            return res.status(404).json({ error: "Machine not found" });
+        }
+
+        const repairCount = machine.tickets.filter(
+            (ticket) => ticket.visit === "REPARACION"
+        ).length;
+
+        res.status(200).json({ equipo: machine.name, reparaciones: repairCount });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// Contador de Reparaciones del ultimo mes de todas las maquinas
+const getLastMonthRepairCount = async (req, res) => {
+    try {
+        // Calcula la fecha de hace un mes desde la fecha actual
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+        // Busca los tickets que son reparaciones y se crearon en el último mes
+        const repairCount = await Ticket.countDocuments({
+            visit: "REPARACION",
+            created_at: { $gte: lastMonth }
+        });
+
+        res.status(200).json({ reparacionesUltimoMes: repairCount });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Contador de Reparaciones del ultimo mes por Maquina
+const getLastMonthRepairCountForMachine = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const machine = await Machine.findById(id);
+
+        if (!machine) {
+            return res.status(404).json({ error: "Machine not found" });
+        }
+
+        // Calcula la fecha de hace un mes desde la fecha actual
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+        // Busca los tickets relacionados con la máquina que son reparaciones y se crearon en el último mes
+        const repairCount = await Ticket.countDocuments({
+            _id: { $in: machine.tickets }, // Filtra por los IDs de tickets en la máquina
+            visit: "REPARACION",
+            created_at: { $gte: lastMonth }
+        });
+
+        res.status(200).json({ reparacionesUltimoMes: repairCount });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Contador de Reparaciones por Mes de todos los equipos
+const getMonthlyRepairCounts = async (req, res) => {
+    try {
+        // Define una consulta para agrupar los tickets por mes y contar reparaciones
+        const monthlyCounts = await Ticket.aggregate([
+            {
+                $match: { visit: "REPARACION" } // Filtra por reparaciones
+            },
+            {
+                $group: {
+                    _id: { $month: "$created_at" }, // Agrupa por mes
+                    count: { $sum: 1 } // Cuenta la cantidad de tickets en cada grupo
+                }
+            }
+        ]);
+
+        res.status(200).json({ monthlyCounts });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
 
 // Obtener listado de maquinas con paginacion
 const getMachines = (req, res) => {
@@ -121,29 +223,46 @@ const getMachines = (req, res) => {
 
 // Obtener perfil de maquina por ID
 const getMachine = (req, res) => {
-    // Recoger informacion de la maquina
+    // Recoger información de la máquina
     const { id } = req.params;
 
-    // Buscar y actualizar el ticket con la nueva info
-    Machine.findById({ _id: id }, (error, machine) => {
-
+    // Buscar la máquina por ID
+    Machine.findById(id, (error, machine) => {
         if (error || !machine) {
-            return res.status(500).json({
+            return res.status(404).json({
                 status: "Error",
-                message: "Error al buscar la maquina"
-            })
+                message: "Máquina no encontrada"
+            });
         }
 
-        Client.populate(machine, ("client"), function (err, perfilMachine) {
-            // Listado de maquinas
+        // Buscar los tickets que contengan el ID de la máquina en el campo 'inventario'
+        Ticket.find({ inventario: machine._id })
+            .populate("client", "name")
+            .populate("user", "name")
+            .exec((error, tickets) => {
+                if (error) {
+                    return res.status(500).json({
+                        status: "Error",
+                        message: "Error al buscar los tickets relacionados"
+                    });
+                }
+
+            // Listado de máquina con los tickets relacionados
+            const machineWithTickets = {
+                ...machine._doc,
+                tickets: tickets
+            };
+
             return res.status(200).send({
                 status: "Success",
-                message: "Perfil de maquina por ID",
-                perfil: perfilMachine
+                message: "Perfil de máquina por ID",
+                perfil: machineWithTickets
             });
         });
-    })
+    });
 };
+
+
 
 // Eliminar una maquina
 const deleteMachine = (req, res) => {
@@ -197,5 +316,9 @@ module.exports = {
     getMachines,
     getMachine,
     deleteMachine,
-    list
+    list,
+    getRepairCount,
+    getLastMonthRepairCount,
+    getLastMonthRepairCountForMachine,
+    getMonthlyRepairCounts
 }

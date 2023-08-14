@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {Schema} = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate");
 
 const ClientSchema = mongoose.Schema (
@@ -11,6 +12,16 @@ const ClientSchema = mongoose.Schema (
         direccion:{
             type: String, 
             required: true
+        },
+        location: {
+            latitude: {
+              type: Number,
+              required: true,
+            },
+            longitude: {
+              type: Number,
+              required: true,
+            },
         },
         email:{
             type: String,

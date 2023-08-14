@@ -2,6 +2,7 @@
 const Ticket = require("../models/ticket");
 const User = require("../models/user");
 const Client = require("../models/client")
+const Machine = require("../models/machine")
 const Department = require("../models/department");
 const mongoosePaginate = require("mongoose-pagination");
 
@@ -52,55 +53,44 @@ const save2 = (req, res) => {
 
 // Crear ticket
 const save = async (req, res) => {
+    try {
+        const params = req.body;
 
-    // Conseguir datos del body
-    const params = req.body;
-    
-    // Recoger el nombre del cliente asignar el ticket 
-    const clientName = params.client;
-    const userName = params.user;
+        // Validación
+        if (!params.client || !params.title || !params.priority || !params.obs || !params.department || !params.user || !params.visit) {
+            return res.status(400).json({
+                message: "Validación Incorrecta"
+            });
+        }
 
-/*     // Sacar id del usuario identificado
-    const userLogin = req.user; */
+        const clientName = params.client;
+        const userName = params.user;
 
-    // Comprobar que me llegan bien + validacion
-    if (!params.client || !params.title || !params.priority || !params.obs || !params.department || !params.user || !params.visit) {
-        return res.status(400).json({
-            message: "Validacion Incorrecta"
+        // Buscar al cliente y al usuario en la base de datos
+        const client = await Client.findOne({ name: clientName }, "_id");
+        const user = await User.findOne({ name: userName }, "_id");
+
+        if (!client || !user) {
+            return res.status(400).json({
+                message: "Cliente o usuario no encontrado"
+            });
+        }
+
+        // Crear un nuevo ticket
+        const newTicket = new Ticket({ ...req.body, client: client._id, user: user._id, status: "Pendiente" });
+        await newTicket.save();
+
+        return res.status(200).json({
+            status: "Success",
+            ticketStored: newTicket
         });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
-
-    // Luego buscamos el cliente
-    Client.findOne({ name: clientName }, "_id", function (err, client) {
-        if (err) throw err;
-        console.log(client._id)
-
-        // Buscar al usuario en la base de datos
-        User.findOne({ name: userName }, "_id", function (err, user) {
-            if (err) throw err;
-            console.log(user._id)
+};
 
 
-        // Crear objeto con modelo ticket
-        let newTicket = new Ticket({ ...req.body, client: client._id, user: user._id, status: "Pendiente" });
-
-        newTicket.save((error, ticketStored) => {
-            if (error || !ticketStored) {
-                return res.status(500).send({
-                    status: "Error",
-                    message: "No se ha podido crear el ticket",
-                })
-            }
-
-            return res.status(200).send({
-                status: "Success",
-                ticketStored
-            })
-        })
-    })
-})
-
-}
 
 // Listado de tickets que tiene el usuario logueado
 const listMyTickets = (req, res) => {
@@ -156,9 +146,10 @@ const getTickets = (req, res) => {
 
     if (status === undefined) {
         Ticket.find()
-            .populate("user", "name -_id")
-            .populate("client", "name -_id")
+            .populate("user", "name")
+            .populate("client", "name")
             .populate("department", "name -_id")
+            .populate("inventario", "name")
             .paginate(page, itemPerPage, async (error, tickets, total) => {
                 if (error || !tickets) {
                     return res.status(404).send({
@@ -244,85 +235,99 @@ const getTickets = (req, res) => {
     );
 }; */
 
-const updateTicket = async (req, res) => {
-    const ticket = req.body;
+    const updateTicket = async (req, res) => {
+        const ticket = req.body;
 
-    let updateData = {};
+        let updateData = {};
 
-    if (ticket.client) {
-        const clientResult = await new Promise((resolve, reject) => {
-            Client.findOne({ name: ticket.client }, "_id", function (error, client) {
-                if (error || !client) {
-                    reject(new Error("No se ha podido encontrar el cliente"));
-                } else {
-                    resolve(client);
-                }
+        if (ticket.client) {
+            const clientResult = await new Promise((resolve, reject) => {
+                Client.findOne({ name: ticket.client }, "_id", function (error, client) {
+                    if (error || !client) {
+                        reject(new Error("No se ha podido encontrar el cliente"));
+                    } else {
+                        resolve(client);
+                    }
+                });
             });
-        });
 
-        updateData.client = clientResult._id;
-    }
+            updateData.client = clientResult._id;
+        }
 
-    if (ticket.user) {
-        const userResult = await new Promise((resolve, reject) => {
-            User.findOne({ name: ticket.user }, "_id", function (error, user) {
-                if (error || !user) {
-                    reject(new Error("No se ha podido encontrar el usuario"));
-                } else {
-                    resolve(user);
-                }
+        if (ticket.user) {
+            const userResult = await new Promise((resolve, reject) => {
+                User.findOne({ name: ticket.user }, "_id", function (error, user) {
+                    if (error || !user) {
+                        reject(new Error("No se ha podido encontrar el usuario"));
+                    } else {
+                        resolve(user);
+                    }
+                });
             });
-        });
 
-        updateData.user = userResult._id;
-    }
+            updateData.user = userResult._id;
+        }
 
-    if (ticket.department) {
-        updateData.department = ticket.department;
-    }
+        if (ticket.department) {
+            updateData.department = ticket.department;
+        }
 
-    if (ticket.title) {
-        updateData.title = ticket.title;
-    }
+        if (ticket.title) {
+            updateData.title = ticket.title;
+        }
 
-    if (ticket.obs) {
-        updateData.obs = ticket.obs;
-    }
+        if (ticket.obs) {
+            updateData.obs = ticket.obs;
+        }
 
-    if (ticket.diagnostic) {
-        updateData.diagnostic = ticket.diagnostic;
-    }
+        if (ticket.diagnostic) {
+            updateData.diagnostic = ticket.diagnostic;
+        }
 
-    if (ticket.status) {
-        updateData.status = ticket.status;
-    }
+        if (ticket.status) {
+            updateData.status = ticket.status;
+        }
 
-    if (ticket.priority) {
-        updateData.priority = ticket.priority;
-    }
+        if (ticket.priority) {
+            updateData.priority = ticket.priority;
+        }
 
-    // Actualizar el ticket con los campos modificados
-    Ticket.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-        { new: true },
-        (err, ticketUpdated) => {
-            if (err || !ticketUpdated) {
-                return res.status(500).json({
-                    status: "Error",
-                    message: "Error al actualizar el ticket",
-                    ticket: ticket,
+        if (ticket.inventario) {
+            updateData.inventario = ticket.inventario;
+        }
+
+        // Si hay un inventario en el ticket, actualizar las máquinas correspondientes
+        if (ticket.inventario && ticket.inventario.length > 0) {
+            await Machine.updateMany(
+                { _id: { $in: ticket.inventario } }, // Filtra por IDs de equipos en el inventario
+                { $push: { tickets: req.params.id } } // Agrega el ID del ticket al array
+            );
+        }
+
+        console.log("tiene tickets", ticket.inventario)
+
+        // Actualizar el ticket con los campos modificados
+        Ticket.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true },
+            (err, ticketUpdated) => {
+                if (err || !ticketUpdated) {
+                    return res.status(500).json({
+                        status: "Error",
+                        message: "Error al actualizar el ticket",
+                        ticket: ticket,
+                    });
+                }
+
+                return res.status(200).json({
+                    status: "success",
+                    message: "Ticket actualizado correctamente",
+                    ticket: ticketUpdated,
                 });
             }
-
-            return res.status(200).json({
-                status: "success",
-                message: "Ticket actualizado correctamente",
-                ticket: ticketUpdated,
-            });
-        }
-    );
-};
+        );
+    };
 
 
 // Perfil de ticket
@@ -333,8 +338,8 @@ const profile = (req, res) => {
 
     // Consulta para sacar los datos del cliente
     Ticket.findById(id)
-        .populate("client", "name -_id")
-        .populate("user", "name -_id")
+        .populate("client", "name")
+        .populate("user", "name")
         .exec((error, ticketProfile) => {
             if (error || !ticketProfile) {
                 return res.status(404).send({

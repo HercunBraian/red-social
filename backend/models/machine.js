@@ -7,6 +7,12 @@ const MachineSchema = Schema (
             ref: "Client",
             required: true
         },
+        tickets: [
+            {
+                type: Schema.ObjectId,
+                ref: "Ticket",
+            },
+        ],
         name:{
             type: String,
             required: true,
