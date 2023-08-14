@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.user-item{
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e4e4e4;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    padding: 15px;
+    border: 2px solid #f6d3ce;
+}
+
+.user-item__visit{
+    display: flex;
+    flex-direction: column;
+}
+
+.user-item__eye{
+    margin-bottom: 10px;
+    align-self: flex-end;
+}
+
+.MuiDataGrid-root .MuiDataGrid-columnsContainer{
+    background-color: #EFF2F7 !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-columnHeaderTitle{
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cell--textLeft{
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+.MuiSelect-select.MuiSelect-select {
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+

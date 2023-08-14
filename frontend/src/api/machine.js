@@ -46,27 +46,50 @@ export class Machine {
     }
   }
 
-  /*  async perfilClient(params) {
-    const idClient = params;
+  async perfilMachine(token, idMachine) {
     try {
-      const url = `${this.baseApi}/${ENV.API_ROUTES.ClientPerfil}/${idClient}`;
+      const url = `${this.baseApi}/${ENV.API_ROUTES.MachinePerfil}/${idMachine}`;
       const params = {
-        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: token,
         },
       };
-
+  
       const response = await fetch(url, params);
       const result = await response.json();
-
-      if (response !== 200) throw result;
+  
+      if (response.status !== 200) throw result;
+  
       return result;
     } catch (error) {
       throw error;
     }
   }
- */
+
+  // Contador de Reparaciones Totales
+  async countRepairTotal(token, id) {
+    try {
+      const url = `${this.baseApi}/${ENV.API_ROUTES.MachineCountTotal}/${id}`;
+      const params = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+ 
   /* async updateCourse(accessToken, idCourse, data) {
     try {
       const formData = new FormData();

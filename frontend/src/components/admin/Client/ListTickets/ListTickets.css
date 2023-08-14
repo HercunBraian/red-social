@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+
 .user-item{
     background-color: #fff;
     display: flex;
@@ -15,7 +18,54 @@
     flex-direction: column;
 }
 
+.title-box{
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 18px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
 .user-item__eye{
     margin-bottom: 10px;
     align-self: flex-end;
+}
+
+.box-grid{
+    padding: 20px 30px 30px 30px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+.css-z8fhq1-MuiDataGrid-columnHeaders{
+    background-color: #EFF2F7 !important;
+}
+
+.css-1jbbcbn-MuiDataGrid-columnHeaderTitle{
+    font-weight: 700 !important;
+    font-size: 13px !important;
+}
+
+.css-h6f3od-MuiDataGrid-root .MuiDataGrid-cellContent{
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+.css-h6f3od-MuiDataGrid-root .MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell{
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+.css-8m9qe9-MuiTablePagination-displayedRows {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+.css-hpjhlg-MuiTablePagination-root .MuiTablePagination-selectLabel{
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+.css-194a1fa-MuiSelect-select-MuiInputBase-input.css-194a1fa-MuiSelect-select-MuiInputBase-input.css-194a1fa-MuiSelect-select-MuiInputBase-input{
+    font-size: 13px !important;
+    font-weight: 600 !important;
 }

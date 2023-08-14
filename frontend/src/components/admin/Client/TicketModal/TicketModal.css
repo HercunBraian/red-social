@@ -1,0 +1,77 @@
+.modal-header{
+    background-color: cornflowerblue !important;
+    display: flex !important;
+    height: 100px !important;
+}
+
+.ui.active.modal{
+    width: 500px !important;
+}
+
+.modal-header__title{
+    color: aliceblue !important;
+    padding-top: 8px;
+    font-size: 1.5rem;
+}
+
+.modal-header__title p{
+    color: aliceblue !important;
+    font-size: 1rem;
+}
+
+.modal-content{
+    box-shadow: 0px 0px 3px 1px #e8e8e8 !important;
+    border: 1px solid #d8d8d8 !important;
+    padding: 15px;
+}
+
+.modal-content__button{
+    position: relative;
+    top:-42px;
+}
+
+.modal-content__button .button{
+    color:white !important;
+    background: rgb(77, 48, 184) !important ;
+    box-shadow: 0px 0px 19px -3px rgba(0,0,0,0.3) !important;
+    cursor: pointer !important;
+    border-radius: 2px !important;
+}
+
+.modal-content__button .active-button{
+    color:rgb(95, 91, 91) !important;
+    background: rgb(214, 215, 216) !important ;
+    box-shadow: 0px 0px 19px -3px rgba(0,0,0,0.3) !important;
+    cursor: pointer !important;
+    border-radius: 2px !important;
+}
+
+.modal-content span{
+    font-size: 1.1em;
+}
+
+.resumen-block{
+    border-bottom: 1px solid lightgray;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.resumen-block p{
+    font-size: 18px;
+}
+
+
+.resumen-client__name p{
+    font-size: 20px;
+    text-decoration: none;
+    color: #f87902;
+    cursor: pointer;
+}
+
+.resumen-tecnico__name p{
+    font-size: 20px;
+    text-decoration: none;
+    color: #4a4a4a;
+    cursor: pointer;
+}
+

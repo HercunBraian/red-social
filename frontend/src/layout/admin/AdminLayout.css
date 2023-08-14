@@ -1,0 +1,19 @@
+.pro-sidebar > .pro-sidebar-inner > .pro-sidebar-layout{
+    height: 100vh !important;
+    scrollbar-width: none !important;
+  -ms-overflow-style: none !important; /* IE 10+ */
+  
+  
+}
+
+::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent !important
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: transparent !important;
+  }

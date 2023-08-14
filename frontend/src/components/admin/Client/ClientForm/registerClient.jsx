@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 // Importacion Hooks
 import useAuth from '../../../../hooks/useAuth';
@@ -47,9 +48,25 @@ function ClientRegister(props) {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+      <LockOutlinedIcon
+        primary
+        onClick={handleOpen}
+        style={{
+          fontSize: "40px",
+          color: "black",
+          backgroundColor: "cornflowerblue",
+          padding: "10px",
+          borderRadius: "30px",
+          cursor: "pointer", // Cambiar el cursor al puntero
+          position: "absolute",
+          top: "92vh",
+          width: "36px",
+          height: "36px",
+          marginLeft: "170px",
+        }}
+      >
         Nuevo Cliente
-      </Button>
+      </LockOutlinedIcon>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogContent>

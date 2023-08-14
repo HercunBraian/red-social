@@ -20,6 +20,7 @@ export const ENV = {
     MachineCreate: "machine/save",
     MachineList: "machine/list",
     MachinePerfil: "machine/perfil",
+    MachineCountTotal: "machine/count-repair",
     TicketList: "ticket/getTickets",
     TicketCreate: "ticket/save",
     TicketUpdate: "ticket/update",

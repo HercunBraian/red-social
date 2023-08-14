@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 .ui.modal > .content {
     color: black !important;
 }
@@ -40,7 +42,7 @@
     vertical-align: middle;
     appearance: none;
     text-decoration: none;
-    font-family: Inter, sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: 'Poppins', sans-serif;
     font-size: 0.875rem;
     text-transform: uppercase;
     min-width: 64px;

@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.ui.menu {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.ui.secondary.menu .item{
+    font-weight: 600 !important;
+}
+
+.ui.secondary.menu{
+    background-color: #293455 !important;
+}
+
+.ui.secondary.menu a{
+    color: white !important;
+}
+
+.a.item{
+    color: white !important;
+}

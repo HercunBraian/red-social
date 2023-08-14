@@ -2,7 +2,7 @@ import React, { useState, useEffect, createRef } from "react";
 import { Box } from "@mui/material";
 import { ENV } from "../../../config/config";
 import { useParams } from "react-router-dom";
-import { Form, TextArea, Select } from "semantic-ui-react";
+import { Form, TextArea } from "semantic-ui-react";
 import { Ticket } from "../../../api/ticket";
 import { useFormik } from "formik";
 import { initialValues, validationSchema } from "./ticketUpdateValidation";
@@ -21,8 +21,6 @@ const ClientDetailContainer = () => {
 
   // useState Tickets
   const [infoTicket, setInfoTicket] = useState({});
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [numPages, setNumPages] = useState(null);
 
   const { ticketId } = useParams();
 

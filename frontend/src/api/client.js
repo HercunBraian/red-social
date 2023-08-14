@@ -68,6 +68,27 @@ async listTickets(token, idClient) {
   }
 }
 
+async listMachines(token, idClient) {
+  try {
+    const url = `${this.baseApi}/${ENV.API_ROUTES.ClientListMachine}/${idClient}`;
+    const params = {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    };
+
+    const response = await fetch(url, params);
+    const result = await response.json();
+
+    if (response.status !== 200) throw result;
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 async perfilClient(idClient, token) {
     try {

@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import Sidebar from "../../components/admin/Sidebar";
+import "./AdminLayout.css"
 import Topbar from "../../components/admin/Topbar";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";

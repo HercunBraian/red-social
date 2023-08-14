@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Tab, Button } from "semantic-ui-react";
-
-import { Client } from "../../api/client";
-import useAuth from "../../hooks/useAuth";
+import React, { useState } from "react";
+import { Tab } from "semantic-ui-react";
+import "./Clients.css";
 
 // Componentes
 import SidebarClient from "../../components/admin/Client/Sidebar";
 import { ListTickets } from "../../components/admin/Client/ListTickets/ListTickets";
 import SidebarInfo from "../../components/admin/Client/SidebarInfo/SidebarInfo";
-
-const clientController = new Client();
-
+import TicketModal from "../../components/admin/Client/TicketModal/TicketModal";
+import { ListMachine } from "../../components/admin/Client/ListMachine/ListMachine";
+import Map from "../../components/admin/Mapa/Mapa";
 
 const Clients = () => {
-  const { token } = useAuth();
-
   const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClientCoordinates, setSelectedClientCoordinates] = useState(null);
 
   const handleClientSelection = (clientId) => {
     setSelectedClient(clientId);
@@ -27,7 +24,56 @@ const Clients = () => {
     setSelectedClient(null);
   };
 
+  console.log(selectedClientCoordinates)
+
+  const customers = [
+    {
+      id: 1,
+      name: "Cliente 1",
+      location: {
+        latitude: -34.57496634584861,
+        longitude: -58.424100386297404
+      },
+      direccion: "Dirección 1",
+      email: "cliente1@example.com",
+      phone: "1234567890",
+    },
+    {
+      id: 2,
+      name: "Cliente 2",
+      location: {
+        latitude: -34.725597998554605,
+        longitude: -58.26605261264482
+      },
+      direccion: "Dirección 2",
+      email: "cliente2@example.com",
+      phone: "9876543210",
+    },
+    // Agrega más objetos de clientes si es necesario
+  ];
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  const handleMarkerClick = (customer) => {
+    setSelectedCustomer(customer);
+  };
+
   const panes = [
+    {
+      menuItem: "Mapa",
+      render: () => (
+        <Tab.Pane attached={false}>
+          <div>
+            <Map customers={customers} onMarkerClick={handleMarkerClick} selectedClientCoordinates={selectedClientCoordinates} />
+            {selectedCustomer && (
+              <div>
+                <p>Selected Customer: {selectedCustomer.name}</p>
+              </div>
+            )}
+          </div>
+        </Tab.Pane>
+      ),
+    },
     {
       menuItem: "Tickets",
       render: () => (
@@ -40,7 +86,7 @@ const Clients = () => {
       menuItem: "Inventario",
       render: () => (
         <Tab.Pane attached={false}>
-    
+          <ListMachine selectedClient={selectedClient} />
         </Tab.Pane>
       ),
     },
@@ -53,14 +99,6 @@ const Clients = () => {
         </Tab.Pane>
       ),
     },
-    {
-      menuItem: "Mapa",
-      render: () => (
-        <Tab.Pane attached={false}>
-          <h2>Mapa</h2>
-        </Tab.Pane>
-      ),
-    },
   ];
 
   return (
@@ -69,7 +107,10 @@ const Clients = () => {
         {selectedClient ? (
           <SidebarInfo client={selectedClient} onGoBack={handleGoBack} />
         ) : (
-          <SidebarClient handleClientSelection={handleClientSelection} />
+          <SidebarClient
+          handleClientSelection={handleClientSelection}
+          setSelectedClientCoordinates={setSelectedClientCoordinates}
+        />
         )}
         <div className="content-panes">
           <Tab menu={{ secondary: true }} panes={panes} />
