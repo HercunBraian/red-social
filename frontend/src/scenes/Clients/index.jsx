@@ -13,6 +13,7 @@ import Map from "../../components/admin/Mapa/Mapa";
 const Clients = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedClientCoordinates, setSelectedClientCoordinates] = useState(null);
+  const [zoomValue, setZoomValue] = useState(10);
 
   const handleClientSelection = (clientId) => {
     setSelectedClient(clientId);
@@ -23,8 +24,6 @@ const Clients = () => {
   const handleGoBack = () => {
     setSelectedClient(null);
   };
-
-  console.log(selectedClientCoordinates)
 
   const customers = [
     {
@@ -49,6 +48,17 @@ const Clients = () => {
       email: "cliente2@example.com",
       phone: "9876543210",
     },
+    {
+      id: 3,
+      name: "Cliente 3",
+      location: {
+        latitude: -34.65235736246349,
+        longitude: -58.771568879685
+      },
+      direccion: "Dirección 2",
+      email: "cliente2@example.com",
+      phone: "9876543210",
+    },
     // Agrega más objetos de clientes si es necesario
   ];
 
@@ -64,7 +74,7 @@ const Clients = () => {
       render: () => (
         <Tab.Pane attached={false}>
           <div>
-            <Map customers={customers} onMarkerClick={handleMarkerClick} selectedClientCoordinates={selectedClientCoordinates} />
+            <Map customers={customers} onMarkerClick={handleMarkerClick} zoom={zoomValue} selectedClientCoordinates={selectedClientCoordinates} />
             {selectedCustomer && (
               <div>
                 <p>Selected Customer: {selectedCustomer.name}</p>
@@ -109,6 +119,7 @@ const Clients = () => {
         ) : (
           <SidebarClient
           handleClientSelection={handleClientSelection}
+          setZoomValue={setZoomValue}
           setSelectedClientCoordinates={setSelectedClientCoordinates}
         />
         )}

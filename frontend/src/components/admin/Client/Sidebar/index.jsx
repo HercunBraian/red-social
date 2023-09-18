@@ -36,7 +36,7 @@ const SidebarContainer = styled(Box)({
   "z-index": 1,
 });
 
-const SidebarClient = ({ handleClientSelection, setSelectedClientCoordinates  }) => {
+const SidebarClient = ({ handleClientSelection, setSelectedClientCoordinates, setZoomValue  }) => {
   // Token de Autenticacion
   const { token } = useAuth();
   // Estado para almacenar la lista de Clientes
@@ -101,6 +101,7 @@ const SidebarClient = ({ handleClientSelection, setSelectedClientCoordinates  })
                     onClick={() => {
                       handleClientSelection(client._id);
                       setSelectedClientCoordinates(client.location);
+                      setZoomValue(5); // Establecer el valor de zoom deseado
                     }}
                   />
                 </ListItem>
