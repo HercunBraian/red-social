@@ -70,21 +70,6 @@ const Clients = () => {
 
   const panes = [
     {
-      menuItem: "Mapa",
-      render: () => (
-        <Tab.Pane attached={false}>
-          <div>
-            <Map customers={customers} onMarkerClick={handleMarkerClick} zoom={zoomValue} selectedClientCoordinates={selectedClientCoordinates} />
-            {selectedCustomer && (
-              <div>
-                <p>Selected Customer: {selectedCustomer.name}</p>
-              </div>
-            )}
-          </div>
-        </Tab.Pane>
-      ),
-    },
-    {
       menuItem: "Tickets",
       render: () => (
         <Tab.Pane attached={false}>
